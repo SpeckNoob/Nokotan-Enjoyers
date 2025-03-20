@@ -1,4 +1,4 @@
 Control software
 ====
 
-This directory contains the code for control software.
+This directory contains the source code for the project.
