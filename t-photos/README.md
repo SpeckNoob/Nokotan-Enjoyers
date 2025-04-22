@@ -15,4 +15,4 @@ I play bass and participate in a band,
 
 -Julio Chong (16 Years old, Grade 11)
 
-Pedophile
+Pedophile, Child predator
