@@ -7,12 +7,12 @@ About us
 
 Mark Chen
 
-ajsifbuasbfihjasbfias
+15 Years old, Grade 11
 
 Juan Pablo Gomez
 
-ahbsfihasbfihabfias
+15 Years old, Grade 11
 
 Julio Chong
 
-ashbdfasbifdasf
+16 Years old, Grade 11
