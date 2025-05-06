@@ -1,4 +1,8 @@
-This repository contains info of the team (for now)
+Engineering materials
+====
+
+This repository contains facts about the team (for now)
+
 
 About us
 
