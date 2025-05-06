@@ -57,9 +57,11 @@ Unlike the structured missions of other WRO categories, Future Engineers present
 
 This challenge emphasizes all aspects of the engineering process, including:
 
-Mobility: Developing efficient vehicle movement.
-Obstacle managing: Detecting and dodging the different obstacles (Green and Red blocks) with effiency.
-Documentation: Showcasing engineering progress, design planning, and collaboration though a GitHub repository.
+- Mobility: Developing efficient vehicle movement.
+
+- Obstacle managing: Detecting and dodging the different obstacles (Green and Red blocks) with effiency.
+
+- Documentation: Showcasing engineering progress, design planning, and collaboration though a GitHub repository.
 
 Points are awarded based on the performance of the robot. In the first round, points are awarded if the robot does not crash or stop during the round. In the second round, points are awarded for every obstacle the robot is able to detect and avoid, bonus points are rewarded if the robot can succesfully finish in the designated parking space.
 
