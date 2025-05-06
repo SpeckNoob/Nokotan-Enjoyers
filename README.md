@@ -21,7 +21,7 @@ Juan Pablo Gomez, Age: 16
 (insert picture)
 
 School: Panamerican School of Panama, PAS
-Inset text
+lorem ipsum
 
 ----
 
@@ -30,6 +30,6 @@ Julio Chong, Age: 16
 (insert picture)
 
 School: Panamerican School of Panama, PAS
-Inset text
+lorem ipsum
 
 ----
