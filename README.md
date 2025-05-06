@@ -1,7 +1,7 @@
 Engineering materials
 ====
 
-This repository contains facts about the team (for now)
+This repository contains the documentation for the Mustangs Down team's robot
 
 
 About us
