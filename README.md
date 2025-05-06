@@ -5,8 +5,7 @@ This repository contains the documentation for the Mustangs Down team's robot fo
 
 The team
 ======
-About us
-----
+
 Mark Chen, Age: 16
 
 (insert picture)
