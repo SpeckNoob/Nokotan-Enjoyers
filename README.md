@@ -9,7 +9,7 @@ About us
 
 Mark Chen, Age: 16
 
-(inset picture)
+(insert picture)
 
 School: Panamerican School of Panama, PAS
 Hi!, I'm Mark from Panama. I've been participating in WRO since 2022 and this is my second year participating in the Future Engineers category. I enjoy playing piano and I am a part of a school band, other hobbies include cubing (Rubik's cube competitions), gaming, art and writing.
