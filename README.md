@@ -8,11 +8,11 @@ The team
 
 Mark Chen, Age: 16
 
-(insert picture)
+![image](https://github.com/user-attachments/assets/263bca30-1d4f-4f59-a675-890829c32520)
 
 School: Panamerican School of Panama, PAS
 
-Hi!, I'm Mark from Panama with Chinese ancestors born in February 8 2009. I've been participating in WRO since 2022 and this is my second year participating in the Future Engineers category. I enjoy playing piano and I am a part of a school band, other hobbies include cubing (Rubik's cube competitions), gaming, drawing and writing.
+Hi!, I'm Mark from Panama with Chinese origin born in February 8 2009. I've been participating in WRO since 2022 and this is my second year participating in the Future Engineers category. I enjoy playing piano and I am a part of a school band, other hobbies include cubing (Rubik's cube competitions), gaming, drawing and writing.
 
 ----
 
