@@ -76,5 +76,10 @@ Photos of the robot
 
 Motors and systems
 ====
+The robot operates with multiple motors and sensors which will be showcased here.
+
 Movement
 ----
+The robot uses motors for drving and steering, these components work together to ensure the robot has a smooth and efficient movement.
+
+
