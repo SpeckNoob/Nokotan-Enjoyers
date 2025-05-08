@@ -82,4 +82,8 @@ Movement
 ----
 The robot uses motors for drving and steering, these components work together to ensure the robot has a smooth and efficient movement.
 
+| Name     | Task       | Status   |
+|----------|------------|----------|
+| Alice    | Write docs | Done     |
+| Bob      | Review PR  | In Prog. |
 
