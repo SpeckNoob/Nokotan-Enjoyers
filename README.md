@@ -67,3 +67,14 @@ Points are awarded based on the performance of the robot. In the first round, po
 
 Photos of the robot
 ====
+
+(Insert picture) (Insert picture)
+
+(Insert picture) (Insert picture)
+
+(Insert picture) (Insert picture)
+
+Motors and systems
+====
+Movement
+----
