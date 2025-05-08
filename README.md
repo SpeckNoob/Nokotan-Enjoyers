@@ -90,4 +90,8 @@ The robot uses motors for drving and steering, these components work together to
 |    6     |    220     |   200    |    1.0   |
 |   7.2    |    250     |   250    |    1.5   |
 
-We chose this monitor because it was viable and the one we had already, other motors we used didn't hold up or didn't have enough power to move the wheels. Although there are way better motors we could've bought, we chose this one for its dual motor and didn't need a driving axle.
+We chose this motor because it was viable and the one we had already, other motors we used didn't hold up or didn't have enough power to move the wheels. Although there are way better motors we could've bought, we chose this one for its dual motor and it didn't need a driving axle. This made the building process a bit easier and less complicated.
+
+To connect the motor to the skeleton, we made an opening in the skeleton to fit the motor inside, then we held it up with a bent metal sheet and some screws.
+
+![image](https://github.com/user-attachments/assets/bd00b6b5-922a-49a0-bb43-03d6022214f9)
