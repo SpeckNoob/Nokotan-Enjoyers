@@ -95,3 +95,10 @@ We chose this motor because it was viable and the one we had already, other moto
 To connect the motor to the skeleton, we made an opening in the skeleton to fit the motor inside, then we held it up with a bent metal sheet and some screws.
 
 ![image](https://github.com/user-attachments/assets/bd00b6b5-922a-49a0-bb43-03d6022214f9)
+
+The design could be perfected if the skeleton was made to skale with the motor or we had chosen a different motor that not only satisfies what the robot needs but also that it fits confortably to the skeleton.
+
+Steering
+----
+
+
