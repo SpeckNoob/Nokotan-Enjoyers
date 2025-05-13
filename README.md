@@ -117,3 +117,8 @@ Servo motor:
 |  Angle of rotation  |      180       |
 |   Control signal    |   PWM signal   |
 |   Type of servo     |  Digital servo |
+
+|  Voltage |   Temperature   |   Angle of Rotation    |    Torque    |  Control signal  |  Type of Servo  |
+|----------|-----------------|------------------------|--------------|------------------|-----------------|
+|  3.3V~5V |   -30°C~+60°C   |          180           |   1.6KG/cm   |    PWM signal    |  Digital servo  |
+
