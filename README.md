@@ -109,7 +109,9 @@ The steering system is composed of two identicar wheel holders connected with tw
 Servo motor:
 ----
 
-![image](https://github.com/user-attachments/assets/c1188e64-4b96-4dbb-88fa-45dc8717d740)
+![image](https://github.com/user-attachments/assets/c1188e64-4b96-4dbb-88fa-45dc8717d740) |  Voltage |   Temperature   |   Angle of Rotation    |    Torque    |  Control signal  |  Type of Servo  |
+|----------|-----------------|------------------------|--------------|------------------|-----------------|
+|  3.3V~5V |   -30°C~+60°C   |          180           |   1.6KG/cm   |    PWM signal    |  Digital servo  |
 
 |  Voltage |   Temperature   |   Angle of Rotation    |    Torque    |  Control signal  |  Type of Servo  |
 |----------|-----------------|------------------------|--------------|------------------|-----------------|
