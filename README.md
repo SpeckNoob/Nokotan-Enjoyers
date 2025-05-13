@@ -111,13 +111,6 @@ Servo motor:
 
 ![image](https://github.com/user-attachments/assets/c1188e64-4b96-4dbb-88fa-45dc8717d740)
 
-|       Voltage       |    3.3V~5V     |
-|     Temperature     |   -30°C~+60°C  |
-|       Torque        |    1.6KG/cm    |
-|  Angle of rotation  |      180       |
-|   Control signal    |   PWM signal   |
-|   Type of servo     |  Digital servo |
-
 |  Voltage |   Temperature   |   Angle of Rotation    |    Torque    |  Control signal  |  Type of Servo  |
 |----------|-----------------|------------------------|--------------|------------------|-----------------|
 |  3.3V~5V |   -30°C~+60°C   |          180           |   1.6KG/cm   |    PWM signal    |  Digital servo  |
