@@ -102,6 +102,18 @@ Steering
 ----
 We experimented with many steering mechanisms but the one we found most success was anti-Ackerman steering. Other methods where either too big and complex or didn't turn the right amount. Anti-Ackerman systems are usually used on racing cars where the vehicles must turn at high speeds and the tires might slip, the outer tire’s increased steering angle helps compensate for these slip angles, maximizing grip during high-speed cornering. Even though with this robot we can't reach those speeds where the wheels start slipping, the anti-Ackerman system is still the most effective and simple for this competition.
 
+The steering system is composed of two identicar wheel holders connected with two steering axels, these two axels are then connected to the servo motor in the middle.
+
 ![image](https://github.com/user-attachments/assets/c8e9e390-33da-499f-b02f-5bd69cfb3fcb)
 
+Servo motor:
+----
 
+![image](https://github.com/user-attachments/assets/c1188e64-4b96-4dbb-88fa-45dc8717d740)
+
+|       Voltage       |    3.3V~5V     |
+|     Temperature     |   -30°C~+60°C  |
+|       Torque        |    1.6KG/cm    |
+|  Angle of rotation  |      180       |
+|   Control signal    |   PWM signal   |
+|   Type of servo     |  Digital servo |
