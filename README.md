@@ -28,7 +28,7 @@ lorem ipsum
 
 Julio Chong, Age: 16
 
-(insert picture)
+![image](https://github.com/user-attachments/assets/39dfb391-f71d-4759-b822-fce67cd3f061)
 
 School: Panamerican School of Panama, PAS
 
@@ -122,15 +122,9 @@ Motor Driver
 
 ![image](https://github.com/user-attachments/assets/badc365a-1382-4089-88d6-2129cc35cae7)
 
-### Entry 1
-- **Name:** Alice  
-- **Task:** Write docs  
-- **Status:** Done
-
-### Entry 2
-- **Name:** Bob  
-- **Task:** Review PR  
-- **Status:** In Progress
+|     Chip     |   Clock   |   ROM   |  SRAM  |  FLASH  |        Interfaces        |  Input voltages  |
+|--------------|-----------|---------|--------|---------|--------------------------|------------------|
+| ESP-WROOM-32 |   240MHz  |  448KB  |  520KB |   4MB   |  UART , I2C , SPI , CAN  |      6-18V       |
 
 Skeleton/Chassis
 ----
