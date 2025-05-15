@@ -82,7 +82,8 @@ Movement
 ----
 The robot uses motors for drving and steering, these components work together to ensure the robot has a smooth and efficient movement.
 
-![image](https://github.com/user-attachments/assets/a31f16b6-dad3-4478-815c-dd44a009172a)
+<img src="[https://example.com/image.png](https://github.com/user-attachments/assets/a31f16b6-dad3-4478-815c-dd44a009172a)" width="1200" height="1000" />
+
 
 |  Voltage |   Current  |   rpm    |  Torque  |
 |----------|------------|----------|----------|
