@@ -126,6 +126,8 @@ Motor Driver
 |--------------|-----------|---------|--------|---------|--------------------------|------------------|
 | ESP-WROOM-32 |   240MHz  |  448KB  |  520KB |   4MB   |  UART , I2C , SPI , CAN  |      6-18V       |
 
+For motor driver, we chose the Acebott ESP32, it's capable of controling not only the motors but the sensors as well.
+
 Skeleton/Chassis
 ----
 
