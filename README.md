@@ -18,7 +18,7 @@ Hi!, I'm Mark from Panama with Chinese origin born in February 8 2009. I've been
 
 Juan Pablo Gomez, Age: 16
 
-(insert picture)
+![image](https://github.com/user-attachments/assets/b9244ac9-54e1-4af8-89d1-042ac478571a)
 
 School: Panamerican School of Panama, PAS
 
