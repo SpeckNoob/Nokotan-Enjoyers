@@ -131,5 +131,8 @@ For motor driver, we chose the Acebott ESP32, it's capable of controling not onl
 Skeleton/Chassis
 ----
 
+This year, instead of making the chassis out of lego, we changed it to 3D printed since it allowed it to be less bulky and lighter unlike the lego version. 
+
+![image](https://github.com/user-attachments/assets/9f6c9e10-1ba4-45d7-8874-0108a5bd213f)
 
 
