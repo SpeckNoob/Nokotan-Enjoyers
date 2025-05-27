@@ -149,6 +149,14 @@ For the robot we used the OpenMV Cam RT62 which allowed the robot to detect wall
 
 ![image](https://github.com/user-attachments/assets/b646f95c-ab16-4efc-8822-66b5377803ac)
 
-|  Microcontroler |   Flash memory   |  RAM   |    Frequency    |  Resolution  |  FPS  |
-|----------|-----------------|------------------------|--------------|------------------|-----------------|
-|  3.3V~5V |   -30°C~+60°C   |          180           |   1.6KG/cm   |    PWM signal    |  Digital servo  |
+Dimentions:
+
+-Length: 45 mm
+
+-Width: 36 mm
+
+-Height: 29 mm
+
+|  Microcontroler |   Flash memory   |  RAM   |    Frequency    |  Resolution  |  FPS  | Weight |
+|-----------|------------|----------------|--------------|------------------|-------|-------|
+|  ISSI2232  |   32MB   |      512KB       |   600 MHz   |    2592 x 1944    |  40  | 20g |
