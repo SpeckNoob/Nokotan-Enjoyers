@@ -113,7 +113,7 @@ Servo motor:
 
 |  Voltage |   Temperature   |   Angle of Rotation    |    Torque    |  Control signal  |  Type of Servo  |
 |----------|-----------------|------------------------|--------------|------------------|-----------------|
-|  3.3V~5V |   -30°C~+60°C   |          180           |   1.6KG/cm   |    PWM signal    |  Digital servo  |
+|  3.3V~5V |   -30°C~+60°C   |        180           |   1.6KG/cm   |    PWM signal    |  Digital servo  |
 
 For the motor we used the Steren servo motor, it's an okay motor but we chose it because it was the one we had in hand. Although it is a cheap motor, it works perfectly with the design of the robot.
 
@@ -139,12 +139,13 @@ Energy management
 ----
 
 Model 18605
+
 3.7 V
 
 Sensors
 ----
 
-For the robot we used the OpenMV Cam RT62 which allowed the robot to detect walls and the colored blocks more easily. It is a huge improvement from last year's robot since we didn't have access to these type of sensors/camera.
+For the robot we used the OpenMV Cam RT62 which allowed the robot to detect walls and the colored blocks more easily. It's a small, low power, microcontroller board which allows you to easily implement applications using machine vision in the real-world. It is a huge improvement from last year's robot since we didn't have access to these type of sensors/camera.
 
 ![image](https://github.com/user-attachments/assets/b646f95c-ab16-4efc-8822-66b5377803ac)
 
