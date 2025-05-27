@@ -137,6 +137,9 @@ This year, instead of making the chassis out of lego, we changed it to 3D printe
 
 Energy management
 ----
+Battery:
+----
+![image](https://github.com/user-attachments/assets/71818d84-c5d1-4629-8518-718c7c04b7c8)
 
 Model 18605
 
@@ -160,3 +163,5 @@ Dimentions:
 |  Microcontroler |   Flash memory   |  RAM   |    Frequency    |  Resolution  |  FPS  | Weight |
 |-----------|------------|----------------|--------------|------------------|-------|-------|
 |  ISSI2232  |   32MB   |      512KB       |   600 MHz   |    2592 x 1944    |  40  | 20g |
+
+
