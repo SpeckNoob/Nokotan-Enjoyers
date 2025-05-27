@@ -149,3 +149,6 @@ For the robot we used the OpenMV Cam RT62 which allowed the robot to detect wall
 
 ![image](https://github.com/user-attachments/assets/b646f95c-ab16-4efc-8822-66b5377803ac)
 
+|  Microcontroler |   Flash memory   |  RAM   |    Frequency    |  Resolution  |  FPS  |
+|----------|-----------------|------------------------|--------------|------------------|-----------------|
+|  3.3V~5V |   -30°C~+60°C   |          180           |   1.6KG/cm   |    PWM signal    |  Digital servo  |
