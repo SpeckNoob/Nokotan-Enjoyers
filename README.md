@@ -135,4 +135,16 @@ This year, instead of making the chassis out of lego, we changed it to 3D printe
 
 ![image](https://github.com/user-attachments/assets/9f6c9e10-1ba4-45d7-8874-0108a5bd213f)
 
+Energy management
+----
+
+Model 18605
+3.7 V
+
+Sensors
+----
+
+For the robot we used the OpenMV Cam RT62 which allowed the robot to detect walls and the colored blocks more easily. It is a huge improvement from last year's robot since we didn't have access to these type of sensors/camera.
+
+![image](https://github.com/user-attachments/assets/b646f95c-ab16-4efc-8822-66b5377803ac)
 
