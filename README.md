@@ -113,7 +113,7 @@ Servo motor:
 
 |  Voltage |   Temperature   |   Angle of Rotation    |    Torque    |  Control signal  |  Type of Servo  |
 |----------|-----------------|------------------------|--------------|------------------|-----------------|
-|  3.3V~5V |   -30°C~+60°C   |        180           |   1.6KG/cm   |    PWM signal    |  Digital servo  |
+|  3.3V~5V |   -30°C~+60°C   |          180           |   1.6KG/cm   |    PWM signal    |  Digital servo  |
 
 For the motor we used the Steren servo motor, it's an okay motor but we chose it because it was the one we had in hand. Although it is a cheap motor, it works perfectly with the design of the robot.
 
