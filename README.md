@@ -164,4 +164,23 @@ Dimentions:
 |-----------|------------|----------------|--------------|------------------|-------|-------|
 |  ISSI2232  |   32MB   |      512KB       |   600 MHz   |    2592 x 1944    |  40  | 20g |
 
+Multiplexer
+----
 
+![image](https://github.com/user-attachments/assets/7bd13574-0fd1-40f5-8199-ac040a174dd8)
+
+For a multiplexer we chose the TCA9548A I2C multiplexer, which allows you to communicate with up to 8 I2C devices with the same I2C bus.
+
+Main features:
+----
+-1 to 8 bidireccional translating switches
+
+-Active-low reset input
+
+-Three address pins—up to 8 TCA9548A devices on the same I2C bus
+
+-Channel selection through an I2C bus
+
+-Operating power supply voltage range: 1.65V to 5.5V
+
+-5V tolerant pins
