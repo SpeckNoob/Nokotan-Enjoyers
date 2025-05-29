@@ -172,7 +172,7 @@ Multiplexer
 For a multiplexer we chose the TCA9548A I2C multiplexer, which allows you to communicate with up to 8 I2C devices with the same I2C bus.
 
 Main features:
-----
+
 -1 to 8 bidireccional translating switches
 
 -Active-low reset input
