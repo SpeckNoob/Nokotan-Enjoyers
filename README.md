@@ -167,7 +167,8 @@ Dimentions:
 Multiplexer
 ----
 
-![image](https://github.com/user-attachments/assets/7bd13574-0fd1-40f5-8199-ac040a174dd8)
+![image](https://github.com/user-attachments/assets/c48e9adc-9b48-41bf-b452-00561f16c633)
+
 
 For a multiplexer we chose the TCA9548A I2C multiplexer, which allows you to communicate with up to 8 I2C devices with the same I2C bus.
 
