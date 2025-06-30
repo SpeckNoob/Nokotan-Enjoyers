@@ -226,3 +226,50 @@ bool detenido = false;
 
 Servo motor
 ----
+
+The servo motor is supported by the distance sensors in both right and left sides of the robot, the servo moves accordingly wether the sensors detect a wall on the left or right, additionaly, at the end it checks if it passed the time limit for the code to function.
+
+```python
+
+  // Servo
+  miServo.setPeriodHertz(50);
+  miServo.attach(SERVO_PIN, 500, 2400);
+  miServo.write(SERVO_CENTER);
+
+  // Sensor izquierdo
+  selectOnlyOneMux(MUX_LEFT_ADDR);
+  sensorLeft.setTimeout(500);
+  if (!sensorLeft.init()) {
+    Serial.println("Error: sensor izquierdo no detectado.");
+    while (1);
+  }
+  sensorLeft.setDistanceMode(VL53L1X::Long);
+  sensorLeft.setMeasurementTimingBudget(20000);
+  sensorLeft.startContinuous(20);
+
+  // Sensor derecho
+  selectOnlyOneMux(MUX_RIGHT_ADDR);
+  sensorRight.setTimeout(500);
+  if (!sensorRight.init()) {
+    Serial.println("Error: sensor derecho no detectado.");
+    while (1);
+  }
+  sensorRight.setDistanceMode(VL53L1X::Long);
+  sensorRight.setMeasurementTimingBudget(50000);
+  sensorRight.startContinuous(50);
+
+  Serial.println("Sistema listo.");
+
+  // Tiempo inicial
+  tiempoInicio = millis();
+}
+
+void loop() {
+  // Verificar si se superó el tiempo límite
+  if (!detenido && millis() - tiempoInicio >= TIEMPO_LIMITE_MS) {
+    Serial.println("Tiempo límite alcanzado. Deteniendo todo.");
+    StopMotor();
+    miServo.write(SERVO_CENTER);
+
+```
+
