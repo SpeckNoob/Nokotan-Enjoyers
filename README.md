@@ -22,7 +22,7 @@ Juan Pablo Gomez, Age: 16
 
 School: Panamerican School of Panama, PAS
 
-lorem ipsum
+Hi, I'm Juan Pablo, from Colombia. I love robotics. I've been working with robots since I was 8 years old. My main hobbies are playing bass, hanging out with friends, playing video games, driving karts, and participating in various sports such as football and volleyball.
 
 ----
 
