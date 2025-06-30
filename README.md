@@ -198,4 +198,19 @@ Code for each component
 Drive
 ----
 
+```python
+
+
+void MoveForward() {
+  digitalWrite(EN_PIN, LOW);
+  digitalWrite(STCP_PIN, LOW);
+  shiftOut(DATA_PIN, SHCP_PIN, MSBFIRST, M1_Forward);
+  digitalWrite(STCP_PIN, HIGH);
+  digitalWrite(PWM1_PIN, HIGH);  // Encender PWM a tope
+}
+
+void StopMotor() {
+  digitalWrite(PWM1_PIN, LOW);  // Apagar PWM
+}
+```
 
