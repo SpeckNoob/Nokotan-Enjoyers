@@ -273,3 +273,43 @@ void loop() {
 
 ```
 
+The sensors detect the distance from the wall to the robot and responds accordingly, the servo motor will activate if the robot is 80cm or closer to the wall.
+
+```python
+
+  // Leer sensor izquierdo
+  selectOnlyOneMux(MUX_LEFT_ADDR);
+  int distLeft = sensorLeft.read();
+  if (sensorLeft.timeoutOccurred()) {
+    Serial.println("Timeout sensor izquierdo");
+    distLeft = 0;
+  }
+
+  // Leer sensor derecho
+  selectOnlyOneMux(MUX_RIGHT_ADDR);
+  int distRight = sensorRight.read();
+  if (sensorRight.timeoutOccurred()) {
+    Serial.println("Timeout sensor derecho");
+    distRight = 0;
+  }
+
+  Serial.print("Izquierdo: "); Serial.print(distLeft);
+  Serial.print(" mm | Derecho: "); Serial.println(distRight);
+
+  // Reacción del servo con prioridad
+  if (distLeft > OBSTACLE_THRESHOLD) {
+    Serial.println("Distancia izquierda > 80 cm → girar a la izquierda");
+
+  StopMotor();  // Prioriza el servo
+    delay(100);
+    miServo.write(SERVO_LEFT);
+    delay(2800);
+    miServo.write(SERVO_CENTER);
+    delay(200);
+    MoveForward();  // Reanuda motor
+  } 
+  else if (distRight > OBSTACLE_THRESHOLD) {
+    Serial.println("Distancia derecha > 80 cm → girar a la derecha");
+
+```
+
