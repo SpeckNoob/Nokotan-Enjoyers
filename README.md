@@ -68,11 +68,18 @@ Points are awarded based on the performance of the robot. In the first round, po
 Photos of the robot
 ====
 
-(Insert picture) (Insert picture)
+| Top | Bottom |
+|--------|---------|
+| ![WhatsApp Image 2025-06-30 at 15 49 33_9f3bbfec](https://github.com/user-attachments/assets/43aaa545-8b6f-4e37-bc9e-2e6eea242892) |![WhatsApp Image 2025-06-30 at 15 49 33_6a293fe1](https://github.com/user-attachments/assets/cedce72b-bcb6-45e5-8ab6-52f743984c7b) |
 
-(Insert picture) (Insert picture)
+| Left | Right |
+|--------|---------|
+| ![WhatsApp Image 2025-06-30 at 15 49 33_56ea4051](https://github.com/user-attachments/assets/e097a6ab-d837-4754-b5e6-7f1f7045d6de)|![WhatsApp Image 2025-06-30 at 15 49 33_4cf76fe9](https://github.com/user-attachments/assets/52f4f881-262d-4f04-9244-fb63604a4117) |
 
-(Insert picture) (Insert picture)
+| Front | Back |
+|--------|---------|
+|![WhatsApp Image 2025-06-30 at 15 49 33_d7e21712](https://github.com/user-attachments/assets/a18d05f4-239c-4867-8839-75a2133e14b0)|![WhatsApp Image 2025-06-30 at 15 49 33_67d5e010](https://github.com/user-attachments/assets/7c809ffd-461f-4f71-b14a-5659f50b11cb)
+|
 
 Motors, sensors and systems
 ====
