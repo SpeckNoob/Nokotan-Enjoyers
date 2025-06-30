@@ -400,7 +400,7 @@ This last part is to ensure the robot does not crash into any wall or block afte
 Camera
 ----
 
-The camera is programmed to detect the red and green colors, the camera has other functions but for the sake of simplicity we only used in to detect colors.
+The camera is programmed to detect the red and green colors, the camera has other functions but for the sake of simplicity we only used in to detect colors. The camera was programmed with Arduino
 
 ```arduino
 
