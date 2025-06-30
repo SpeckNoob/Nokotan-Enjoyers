@@ -124,7 +124,7 @@ Servo motor:
 
 For the motor we used the Steren servo motor, it's an okay motor but we chose it because it was the one we had in hand. Although it is a cheap motor, it works perfectly with the design of the robot.
 
-Motor Driver
+Motherboard
 ----
 
 ![image](https://github.com/user-attachments/assets/badc365a-1382-4089-88d6-2129cc35cae7)
