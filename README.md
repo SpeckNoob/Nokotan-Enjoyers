@@ -8,6 +8,9 @@ The team
 
 Mark Chen, Age: 16
 
+
+<img src="![image](https://github.com/user-attachments/assets/d6f0f600-af40-4d66-854e-623142f9e32b)" width="300" height="200">
+
 ![image](https://github.com/user-attachments/assets/263bca30-1d4f-4f59-a675-890829c32520)
 
 School: Panamerican School of Panama, PAS
@@ -89,7 +92,7 @@ Movement
 ----
 The robot uses motors for drving and steering, these components work together to ensure the robot has a smooth and efficient movement.
 
-![image](https://github.com/user-attachments/assets/fbd40ed2-1a61-49ba-8580-67152f42db4c)
+![image](https://github.com/user-attachments/assets/fbd40ed2-1a61-49ba-8580-67152f42db4c) 
 
 |  Voltage |   Current  |   rpm    |  Torque  |
 |----------|------------|----------|----------|
