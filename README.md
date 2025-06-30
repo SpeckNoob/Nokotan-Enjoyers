@@ -234,7 +234,7 @@ bool detenido = false;
 Servo motor
 ----
 
-The servo motor is supported by the distance sensors in both right and left sides of the robot, the servo moves accordingly wether the sensors detect a wall on the left or right, additionaly, at the end it checks if it passed the time limit for the code to function.
+The servo motor is supported by the distance sensors in both right and left sides of the robot, the servo moves accordingly wether the sensors detect a wall on the left or right, additionaly, at the end it stops for a certain amount of time so the robot does not perform more than 3 laps.
 
 ```python
 
