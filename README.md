@@ -185,3 +185,29 @@ Main features:
 -Operating power supply voltage range: 1.65V to 5.5V
 
 -5V tolerant pins
+
+
+Program and source code
+----
+
+For programing the robot, we used both Python and Arduino coding languages. Python because the program for the camera required Python usage and it allowed us to have more precise movements, we used Arduino because we wanted to use a ESP32 motor driver which was more viable and more precise than other models.
+
+Code for each component
+----
+
+Drive
+----
+
+
+void MoveForward() {
+  digitalWrite(EN_PIN, LOW);
+  digitalWrite(STCP_PIN, LOW);
+  shiftOut(DATA_PIN, SHCP_PIN, MSBFIRST, M1_Forward);
+  digitalWrite(STCP_PIN, HIGH);
+  digitalWrite(PWM1_PIN, HIGH);  // Encender PWM a tope
+}
+
+void StopMotor() {
+  digitalWrite(PWM1_PIN, LOW);  // Apagar PWM
+}
+
