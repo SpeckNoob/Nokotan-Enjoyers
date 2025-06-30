@@ -198,8 +198,9 @@ Code for each component
 Drive
 ----
 
-```python
+For driving, the code works by constantly making the car move forward and stopping once all three laps of the track are completed.
 
+```python
 
 void MoveForward() {
   digitalWrite(EN_PIN, LOW);
@@ -213,4 +214,15 @@ void StopMotor() {
   digitalWrite(PWM1_PIN, LOW);  // Apagar PWM
 }
 ```
+Additionaly, a part of the code specifies the maximum amount of time that the code can run.
 
+```python
+
+// Control de tiempo
+#define TIEMPO_LIMITE_MS 67000  // 1 minuto, 7 segundos
+unsigned long tiempoInicio;
+bool detenido = false;
+```
+
+Servo motor
+----
