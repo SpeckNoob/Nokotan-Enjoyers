@@ -320,3 +320,81 @@ The sensors detect the distance from the wall to the robot and responds accordin
 
 ```
 
+Obstacle round
+----
+
+For the obstacle round, the camera was the main component. It is capable of detecting colors and objects from a distance and act accordingly, the distance sensors also play the same role and are still in use for this round. 
+
+The camera detects the green and red blocks and the robot then knows where to turn and when, then it checks the distance sensors to see if it has space or the need to turn, the rest of the code is mostly the same with some slight modifications so the camera could work. 
+
+```python
+
+void loop() {
+  // UART desde cámara: color detectado
+  if (Serial1.available() && !enGiroPorColor) {
+    String color = Serial1.readStringUntil('\n');
+    color.trim();
+
+    if (color == "ROJO") {
+      Serial.println("Color ROJO detectado → giro a la derecha");
+      ejecutarGiroColor(SERVO_RIGHT, SERVO_LEFT);
+    }
+    else if (color == "VERDE") {
+      Serial.println("Color VERDE detectado → giro a la izquierda");
+      ejecutarGiroColor(SERVO_LEFT, SERVO_RIGHT);
+    }
+  }
+
+  MoveForward();  // Siempre avanza a media velocidad
+
+  // Lectura sensores de distancia
+  selectOnlyOneMux(MUX_LEFT_ADDR);
+  int distLeft = sensorLeft.read();
+  if (sensorLeft.timeoutOccurred()) {
+    Serial.println("Timeout sensor izquierdo");
+    distLeft = 0;
+  }
+
+  selectOnlyOneMux(MUX_RIGHT_ADDR);
+  int distRight = sensorRight.read();
+  if (sensorRight.timeoutOccurred()) {
+    Serial.println("Timeout sensor derecho");
+    distRight = 0;
+  }
+
+```
+
+This last part is to ensure the robot does not crash into any wall or block after turning or overturning. It also checks with the distance sensors one more time so it does not misalign from the track's path.
+
+```python
+
+  Serial.print("Izquierdo: "); Serial.print(distLeft);
+  Serial.print(" mm | Derecho: "); Serial.println(distRight);
+
+  if (!enGiroPorColor) {
+    if (distLeft > OBSTACLE_THRESHOLD) {
+      Serial.println("Distancia izquierda > 100 cm → giro a la izquierda");
+      StopMotor();
+      delay(100);
+      miServo.write(SERVO_LEFT);
+      delay(2800);
+      miServo.write(SERVO_CENTER);
+      delay(200);
+      MoveForward();
+    } else if (distRight > OBSTACLE_THRESHOLD) {
+      Serial.println("Distancia derecha > 100 cm → giro a la derecha");
+      StopMotor();
+      delay(100);
+      miServo.write(SERVO_RIGHT);
+      delay(2800);
+      miServo.write(SERVO_CENTER);
+      delay(200);
+      MoveForward();
+    }
+  }
+
+  delay(100);
+}
+```
+
+
