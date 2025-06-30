@@ -8,9 +8,6 @@ The team
 
 Mark Chen, Age: 16
 
-
-<img src="![image](https://github.com/user-attachments/assets/d6f0f600-af40-4d66-854e-623142f9e32b)" width="300" height="200">
-
 ![image](https://github.com/user-attachments/assets/263bca30-1d4f-4f59-a675-890829c32520)
 
 School: Panamerican School of Panama, PAS
