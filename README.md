@@ -11,7 +11,7 @@ This repository contains the documentation for the Mustangs Down team's robot fo
 Table of contents
 ----
 
-- [The team] (#the-team)
+- [The Team](#the-team)
 
 ##The team
 ======
