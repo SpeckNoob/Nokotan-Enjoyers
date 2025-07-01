@@ -194,6 +194,18 @@ Main features:
 -5V tolerant pins
 
 
+Circuit diagram
+----
+
+![electric diagram WRO (1)](https://github.com/user-attachments/assets/a96c6d7c-2828-4230-81ea-050892f3166e)
+
+
+Pins used:
+
+![electric diagram WRO (2)](https://github.com/user-attachments/assets/95201ec8-1249-4721-9a51-392f6b8be53a)
+
+
+
 Program and source code
 ----
 
