@@ -22,6 +22,8 @@ Table of contents
 - [Energy management](#energy-management)
   - [Battery](#battery)
 - [Sensors](#sensors)
+  - [Multiplexer](#multiplexer)
+- [Circuit diagram](#circuit-diagram)
 ## The team
 ----
 
@@ -191,7 +193,7 @@ Dimentions:
 |-----------|------------|----------------|--------------|------------------|-------|-------|
 |  ISSI2232  |   32MB   |      512KB       |   600 MHz   |    2592 x 1944    |  40  | 20g |
 
-Multiplexer
+## Multiplexer
 ----
 
 ![image](https://github.com/user-attachments/assets/c48e9adc-9b48-41bf-b452-00561f16c633)
@@ -214,7 +216,7 @@ Main features:
 -5V tolerant pins
 
 
-Circuit diagram
+## Circuit diagram
 ----
 
 ![electric diagram WRO (1)](https://github.com/user-attachments/assets/a96c6d7c-2828-4230-81ea-050892f3166e)
