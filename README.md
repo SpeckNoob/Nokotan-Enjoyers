@@ -12,7 +12,7 @@ Table of contents
 ----
 
 - [The Team](#the-team)
-- [Photos of the robot](Photos-of-the-robot)
+- [Photos of the robot](photos-of-the-robot)
 
 ## The team
 ======
@@ -92,7 +92,7 @@ Points are awarded based on the performance of the robot. In the first round, po
 |![WhatsApp Image 2025-06-30 at 15 49 33_d7e21712](https://github.com/user-attachments/assets/a18d05f4-239c-4867-8839-75a2133e14b0)|![WhatsApp Image 2025-06-30 at 15 49 33_67d5e010](https://github.com/user-attachments/assets/7c809ffd-461f-4f71-b14a-5659f50b11cb)
 |
 
-Motors, sensors and systems
+## Motors, sensors and systems
 ====
 The robot operates with multiple motors and sensors which will be showcased here.
 
