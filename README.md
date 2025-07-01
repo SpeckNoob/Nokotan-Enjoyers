@@ -12,8 +12,9 @@ Table of contents
 ----
 
 - [The Team](#the-team)
+- [Photos of the robot](photos-of-the-robot)
 
-##The team
+## The team
 ======
 
 Mark Chen, Age: 16
@@ -75,7 +76,7 @@ This challenge emphasizes all aspects of the engineering process, including:
 
 Points are awarded based on the performance of the robot. In the first round, points are awarded if the robot does not crash or stop during the round. In the second round, points are awarded for every obstacle the robot is able to detect and avoid, bonus points are rewarded if the robot can succesfully finish in the designated parking space.
 
-Photos of the robot
+## Photos of the robot
 ====
 
 | Top | Bottom |
