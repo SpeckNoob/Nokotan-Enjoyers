@@ -43,7 +43,7 @@ My name is Julio Chong, a panamenian teen with chinese antescedents who was born
 
 Victor Sanchez (Coach), Age: 35
 
-(insert picture)
+![image](https://github.com/user-attachments/assets/98a81bb6-1889-4778-b462-37a8654daace)
 
 School: Panamerican School of Panama, PAS
 
