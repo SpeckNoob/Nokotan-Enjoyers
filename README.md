@@ -79,7 +79,7 @@ Team photo
 (inset picture)
 
 
-[Back to table of contents](table-of-contents)
+[Back to table of contents](#table-of-contents)
 
 The competition
 ----
@@ -96,7 +96,7 @@ This challenge emphasizes all aspects of the engineering process, including:
 
 Points are awarded based on the performance of the robot. In the first round, points are awarded if the robot does not crash or stop during the round. In the second round, points are awarded for every obstacle the robot is able to detect and avoid, bonus points are rewarded if the robot can succesfully finish in the designated parking space.
 
-[Back to table of contents](table-of-contents)
+[Back to table of contents](#table-of-contents)
 
 ## Photos of the robot
 ----
@@ -113,7 +113,7 @@ Points are awarded based on the performance of the robot. In the first round, po
 |--------|---------|
 |![WhatsApp Image 2025-06-30 at 15 49 33_d7e21712](https://github.com/user-attachments/assets/a18d05f4-239c-4867-8839-75a2133e14b0)|![WhatsApp Image 2025-06-30 at 15 49 33_67d5e010](https://github.com/user-attachments/assets/7c809ffd-461f-4f71-b14a-5659f50b11cb)
 
-[Back to table of contents](table-of-contents)
+[Back to table of contents](#table-of-contents)
 
 ## Motors, sensors and systems
 ----
@@ -228,7 +228,7 @@ Main features:
 
 -5V tolerant pins
 
-[Back to table of contents](table-of-contents)
+[Back to table of contents](#table-of-contents)
 
 ## Circuit diagram
 ----
@@ -240,7 +240,7 @@ Pins used:
 
 ![electric diagram WRO (2)](https://github.com/user-attachments/assets/95201ec8-1249-4721-9a51-392f6b8be53a)
 
-[Back to table of contents](table-of-contents)
+[Back to table of contents](#table-of-contents)
 
 ## Program and source code
 ----
@@ -498,4 +498,4 @@ while True:
     time.sleep_ms(300)  # Da tiempo al ESP32 a leer sin saturarse
 
 ```
-[Back to table of contents](table-of-contents)
+[Back to table of contents](#table-of-contents)
