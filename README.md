@@ -13,9 +13,12 @@ Table of contents
 
 - [The Team](#the-team)
 - [Photos of the robot](#photos-of-the-robot)
+- [Motors, sensors and systems](#motors,-sensors-and-systems)
+
+
 
 ## The team
-======
+----
 
 Mark Chen, Age: 16
 
@@ -62,7 +65,7 @@ Team photo
 (inset picture)
 
 The competition
-====
+----
 
 Unlike the structured missions of other WRO categories, Future Engineers presents a broad problem (often related to autonomous vehicles, smart systems, or complex automation), and teams must engineer a full solution. Teams work within defined technical limits (size, cost, sensors, etc.) that mimic real-life engineering conditions. This challenge has two main tasks, the first round which tests the robot's progamming of being able to drive many laps without crashing. The second round adds obstacles that the robot must avoid crashing into and a parking space where the robot should finish.
 
@@ -77,7 +80,7 @@ This challenge emphasizes all aspects of the engineering process, including:
 Points are awarded based on the performance of the robot. In the first round, points are awarded if the robot does not crash or stop during the round. In the second round, points are awarded for every obstacle the robot is able to detect and avoid, bonus points are rewarded if the robot can succesfully finish in the designated parking space.
 
 ## Photos of the robot
-====
+----
 
 | Top | Bottom |
 |--------|---------|
