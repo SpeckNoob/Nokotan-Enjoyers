@@ -15,7 +15,11 @@ Table of contents
 - [Photos of the robot](#photos-of-the-robot)
 - [Motors, sensors and systems](#motors-sensors-and-systems)
   - [Movement](#movement)
-
+- [Steering](#steering)
+  -[Servo Motor](#servo-motor)
+- [Motherboard](#motherboard)
+- [Skeleton/Chassis](#skeleton/chassis)
+- [Energy management](#energy-management)
 ## The team
 ----
 
