@@ -12,7 +12,7 @@ Table of contents
 ----
 
 - [The Team](#the-team)
-- [Photos of the robot](photos-of-the-robot)
+- [Photos of the robot](#photos-of-the-robot)
 
 ## The team
 ======
