@@ -24,6 +24,8 @@ Table of contents
 - [Sensors](#sensors)
   - [Multiplexer](#multiplexer)
 - [Circuit diagram](#circuit-diagram)
+- [Program and source code](#program-and-source-code)
+  - [Drive](#drive)
 ## The team
 ----
 
@@ -228,7 +230,7 @@ Pins used:
 
 
 
-Program and source code
+## Program and source code
 ----
 
 For programing the robot, we used both Python and Arduino coding languages. Python because the program for the camera required Python usage and it allowed us to have more precise movements, we used Arduino because we wanted to use a ESP32 motor driver which was more viable and more precise than other models.
