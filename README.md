@@ -2,7 +2,7 @@ Mustangs Down
 ====
 
 <p align="center">
-  <img src="files/Header NewMustang (3).gif" width="400" alt="Demo animation">
+  <img src="files/Header NewMustang (3).gif" alt="Demo animation">
 </p>
 
 
