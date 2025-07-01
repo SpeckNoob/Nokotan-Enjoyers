@@ -1,7 +1,10 @@
 Mustangs Down
 ====
 
-![Demo Animation] (files/Header NewMustang (3).gif)
+<p align="center">
+  <img src="files/Header NewMustang (3).gif" width="400" alt="Demo animation">
+</p>
+
 
 This repository contains the documentation for the Mustangs Down team's robot for the 2025 World Robot Olympiad Future Engineers category competition. The robot was designed and built by a team of three.
 
