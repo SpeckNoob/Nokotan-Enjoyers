@@ -16,7 +16,7 @@ Table of contents
 - [Motors, sensors and systems](#motors-sensors-and-systems)
   - [Movement](#movement)
 - [Steering](#steering)
-  -[Servo Motor](#servo-motor)
+   -[Servo Motor](#servo-motor)
 - [Motherboard](#motherboard)
 - [Skeleton/Chassis](#skeleton/chassis)
 - [Energy management](#energy-management)
