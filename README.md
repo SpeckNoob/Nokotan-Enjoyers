@@ -14,6 +14,7 @@ Table of contents
 - [The Team](#the-team)
 - [Photos of the robot](#photos-of-the-robot)
 - [Motors, sensors and systems](#motors-sensors-and-systems)
+  - [Movement](#movement)
 
 ## The team
 ----
@@ -91,13 +92,14 @@ Points are awarded based on the performance of the robot. In the first round, po
 | Front | Back |
 |--------|---------|
 |![WhatsApp Image 2025-06-30 at 15 49 33_d7e21712](https://github.com/user-attachments/assets/a18d05f4-239c-4867-8839-75a2133e14b0)|![WhatsApp Image 2025-06-30 at 15 49 33_67d5e010](https://github.com/user-attachments/assets/7c809ffd-461f-4f71-b14a-5659f50b11cb)
-|
+
 
 ## Motors, sensors and systems
-====
+----
+
 The robot operates with multiple motors and sensors which will be showcased here.
 
-Movement
+## Movement
 ----
 The robot uses motors for drving and steering, these components work together to ensure the robot has a smooth and efficient movement.
 
@@ -117,7 +119,7 @@ To connect the motor to the skeleton, we made an opening in the skeleton to fit 
 
 The design could be perfected if the skeleton was made to skale with the motor or we had chosen a different motor that not only satisfies what the robot needs but also that it fits confortably to the skeleton.
 
-Steering
+## Steering
 ----
 We experimented with many steering mechanisms but the one we found most success was anti-Ackerman steering. Other methods where either too big and complex or didn't turn the right amount. Anti-Ackerman systems are usually used on racing cars where the vehicles must turn at high speeds and the tires might slip, the outer tire’s increased steering angle helps compensate for these slip angles, maximizing grip during high-speed cornering. Even though with this robot we can't reach those speeds where the wheels start slipping, the anti-Ackerman system is still the most effective and simple for this competition.
 
@@ -125,7 +127,7 @@ The steering system is composed of two identicar wheel holders connected with tw
 
 ![image](https://github.com/user-attachments/assets/c8e9e390-33da-499f-b02f-5bd69cfb3fcb)
 
-Servo motor:
+## Servo motor:
 ----
 
 ![image](https://github.com/user-attachments/assets/c1188e64-4b96-4dbb-88fa-45dc8717d740) 
@@ -136,7 +138,7 @@ Servo motor:
 
 For the motor we used the Steren servo motor, it's an okay motor but we chose it because it was the one we had in hand. Although it is a cheap motor, it works perfectly with the design of the robot.
 
-Motherboard
+## Motherboard
 ----
 
 ![image](https://github.com/user-attachments/assets/badc365a-1382-4089-88d6-2129cc35cae7)
@@ -147,14 +149,14 @@ Motherboard
 
 For motor driver, we chose the Acebott ESP32, it's capable of controling not only the motors but the sensors as well.
 
-Skeleton/Chassis
+## Skeleton/Chassis
 ----
 
 This year, instead of making the chassis out of lego, we changed it to 3D printed since it allowed it to be less bulky and lighter unlike the lego version. 
 
 ![image](https://github.com/user-attachments/assets/9f6c9e10-1ba4-45d7-8874-0108a5bd213f)
 
-Energy management
+## Energy management
 ----
 Battery:
 ----
