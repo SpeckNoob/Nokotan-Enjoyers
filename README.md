@@ -20,6 +20,8 @@ Table of contents
 - [Motherboard](#motherboard)
 - [Skeleton/Chassis](#skeleton/chassis)
 - [Energy management](#energy-management)
+  - [Battery](#battery)
+- [Sensors](#sensors)
 ## The team
 ----
 
@@ -162,7 +164,7 @@ This year, instead of making the chassis out of lego, we changed it to 3D printe
 
 ## Energy management
 ----
-Battery:
+## Battery:
 ----
 ![image](https://github.com/user-attachments/assets/71818d84-c5d1-4629-8518-718c7c04b7c8)
 
@@ -170,7 +172,7 @@ Model 18605
 
 3.7 V
 
-Sensors
+## Sensors
 ----
 
 For the robot we used the OpenMV Cam RT62 which allowed the robot to detect walls and the colored blocks more easily. It's a small, low power, microcontroller board which allows you to easily implement applications using machine vision in the real-world. It is a huge improvement from last year's robot since we didn't have access to these type of sensors/camera.
