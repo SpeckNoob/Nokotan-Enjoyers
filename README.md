@@ -13,9 +13,7 @@ Table of contents
 
 - [The Team](#the-team)
 - [Photos of the robot](#photos-of-the-robot)
-- [Motors, sensors and systems](#motors,-sensors-and-systems)
-
-
+- [Motors, sensors and systems](#motors-sensors-and-systems)
 
 ## The team
 ----
