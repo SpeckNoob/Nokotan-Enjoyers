@@ -70,7 +70,7 @@ Victor Sanchez (Coach), Age: 35
 
 School: Panamerican School of Panama, PAS
 
-lorem ipsum
+Hello, I'm Victor Sanchez, robotics profesor with experience in educational programming with LEGO SPIKE in Panamerican School, I've led the robotics scholar proyect for 4 years with the goal of becoming national champion in Panama and solid at an international scale. I enjoy woodworking and playing videogames.
 
 ----
 
