@@ -113,6 +113,8 @@ Points are awarded based on the performance of the robot. In the first round, po
 |--------|---------|
 |![WhatsApp Image 2025-06-30 at 15 49 33_d7e21712](https://github.com/user-attachments/assets/a18d05f4-239c-4867-8839-75a2133e14b0)|![WhatsApp Image 2025-06-30 at 15 49 33_67d5e010](https://github.com/user-attachments/assets/7c809ffd-461f-4f71-b14a-5659f50b11cb)
 
+Video of the robot on Youtube: [Video]((https://youtu.be/vqMiVIuP070))
+
 [Back to table of contents](#table-of-contents)
 
 ## Motors, sensors and systems
@@ -499,3 +501,5 @@ while True:
 
 ```
 [Back to table of contents](#table-of-contents)
+
+
