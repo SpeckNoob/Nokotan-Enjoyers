@@ -14,6 +14,7 @@ Table of contents
 - [The Team](#the-team)
 - [The Competition](#the-competition)
 - [Photos of the robot](#photos-of-the-robot)
+  - [Video](#video)
 - [Motors, sensors and systems](#motors-sensors-and-systems)
   - [Movement](#movement)
 - [Steering](#steering)
@@ -78,7 +79,6 @@ Team photo
 
 (inset picture)
 
-
 [Back to table of contents](#table-of-contents)
 
 The competition
@@ -112,6 +112,10 @@ Points are awarded based on the performance of the robot. In the first round, po
 | Front | Back |
 |--------|---------|
 |![WhatsApp Image 2025-06-30 at 15 49 33_d7e21712](https://github.com/user-attachments/assets/a18d05f4-239c-4867-8839-75a2133e14b0)|![WhatsApp Image 2025-06-30 at 15 49 33_67d5e010](https://github.com/user-attachments/assets/7c809ffd-461f-4f71-b14a-5659f50b11cb)
+
+
+## Video
+---
 
 Video of the robot on Youtube: [Video](https://youtu.be/vqMiVIuP070)
 
