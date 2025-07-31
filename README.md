@@ -28,6 +28,7 @@ Table of contents
 - [Circuit Diagram](#circuit-diagram)
 - [Program and Source Code](#program-and-source-code)
   - [Drive](#drive)
+  - [Open Round](#open-round)
   - [Obstacle Round](#obstacle-round)
   - [Camera](#camera)
 
@@ -374,7 +375,7 @@ The sensors detect the distance from the wall to the robot and responds accordin
 
 ```
 
-Open Round
+## Open Round
 ----
 
 At the start of the round and after every turn, the robot ignores any readings that are one meter or further for two seconds. The sensor has to read a distance of more than 1.2 meters to make a turn, if the sensor on the left detects a distance of more than 1.2 meters, the robot will turn left. After three laps the robot will stop in the same spot that it started, at the start of the round the robot is given a number value of 0 and it increases by 1 every time it makes a lap, after 12 laps (sections) the robot will stop at the position that the value of 0 was given. By using this method, the robot is more stable when it comes to making the turns and also avoids getting too close to the walls.
