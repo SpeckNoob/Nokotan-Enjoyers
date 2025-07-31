@@ -377,7 +377,7 @@ The sensors detect the distance from the wall to the robot and responds accordin
 Open Round
 ----
 
-At the start of the round, the robot ignores any readings that are one meter or further for two seconds, this is the time that the robot takes to complete one section of the track. By using this method the robot is more stable when it comes to making the turns and also avoids getting too close to the walls.
+At the start of the round and after every turn, the robot ignores any readings that are one meter or further for two seconds. The sensor has to read a distance of more than 1.2 meters to make a turn, if the sensor on the left detects a distance of more than 1.2 meters, the robot will turn left. By using this method the robot is more stable when it comes to making the turns and also avoids getting too close to the walls.
 
 ```python
 
