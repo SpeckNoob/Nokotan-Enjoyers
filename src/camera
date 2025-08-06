@@ -1,3 +1,5 @@
+```python
+
 from machine import UART
 import sensor
 import image
@@ -42,3 +44,5 @@ while True:
         print("VERDE")
 
     time.sleep_ms(300)  # Da tiempo al ESP32 a leer sin saturarse
+
+```
