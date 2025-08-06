@@ -1,4 +1,3 @@
-```python
 
 from machine import UART
 import sensor
@@ -45,4 +44,3 @@ while True:
 
     time.sleep_ms(300)  # Da tiempo al ESP32 a leer sin saturarse
 
-```
