@@ -382,8 +382,6 @@ The sensors detect the distance from the wall to the robot and responds accordin
 
 At the start of the round and after every turn, the robot ignores any readings that are one meter or further for two seconds. The sensor has to read a distance of more than 1.2 meters to make a turn, if the sensor on the left detects a distance of more than 1.2 meters, the robot will turn left. After three laps the robot will stop in the same spot that it started, at the start of the round the robot is given a number value of 0 and it increases by 1 every time it makes a lap, after 12 laps (sections) the robot will stop at the position that the value of 0 was given. By using this method, the robot is more stable when it comes to making the turns and also avoids getting too close to the walls.
 
-Video of the robot on Youtube: [Video]([https://youtu.be/vqMiVIuP070](https://youtube.com/shorts/kXKS2O0ia2E?feature=share))
-
 ```python
 
 Ronda abierta
@@ -553,6 +551,8 @@ Obstacle round
 For the obstacle round, the camera was the main component. It is capable of detecting colors and objects from a distance and act accordingly, the distance sensors also play the same role and are still in use for this round. 
 
 The camera detects the green and red blocks and the robot then knows where to turn and when, then it checks the distance sensors to see if it has space or the need to turn, the rest of the code is mostly the same with some slight modifications so the camera could work. 
+
+Video of the robot on Youtube: [Video](https://youtube.com/shorts/kXKS2O0ia2E?feature=share)
 
 ```python
 
