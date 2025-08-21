@@ -190,6 +190,9 @@ This year, instead of making the chassis out of lego, we changed it to 3D printe
 ----
 ## Battery:
 ----
+
+We chose these batteries because they were small and easy to fit on the robot and they had good runtime compared to the lego spike brain. They also deliver higher electric outputs that could power the new motors we chose.
+
 ![image](https://github.com/user-attachments/assets/71818d84-c5d1-4629-8518-718c7c04b7c8)
 
 Model 18605
@@ -199,7 +202,7 @@ Model 18605
 ## Sensors
 ----
 
-For the robot we used the OpenMV Cam RT62 which allowed the robot to detect walls and the colored blocks more easily. It's a small, low power, microcontroller board which allows you to easily implement applications using machine vision in the real-world. It is a huge improvement from last year's robot since we didn't have access to these type of sensors/camera.
+For the robot we used the OpenMV Cam RT62 which allowed the robot to detect walls and the colored blocks more easily. It's a small, low power, microcontroller board which allows you to easily implement applications using machine vision in the real-world. It is a huge improvement from last year's robot since we didn't have access to these type of sensors/camera. A camera gives a robot far more versatility than standard sensors, since it can capture detailed visual information to recognize objects, colors, and surroundings, while single-purpose sensors like ultrasonic or touch only provide narrow data such as distance, contact, or light levels.
 
 ![image](https://github.com/user-attachments/assets/b646f95c-ab16-4efc-8822-66b5377803ac)
 
@@ -254,7 +257,7 @@ Pins used:
 ## Program and source code
 ----
 
-For programing the robot, we used both Python and Arduino coding languages. Python because the program for the camera required Python usage and it allowed us to have more precise movements, we used Arduino because we wanted to use a ESP32 motor driver which was more viable and more precise than other models.
+For programing the robot, we used both Python and Arduino coding languages. Python because the program for the camera required Python usage and it allowed us to have more precise movements, Pyhton is easy to learn, highly versatile, and widely supported: its simple, readable syntax lowers the entry barrier for beginners, yet it’s powerful enough for professionals to use in fields like AI, data science, web development, robotics, and automation. We used Arduino because we wanted to use a ESP32 motor driver which was more viable and more precise than other models. Arduino is good for programming because it’s simple, beginner-friendly, and lets you quickly control hardware like sensors and motors to build real-world projects.
 
 Code for each component
 ----
