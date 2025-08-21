@@ -147,7 +147,7 @@ To connect the motor to the skeleton, we made an opening in the skeleton to fit 
 
 ![image](https://github.com/user-attachments/assets/bd00b6b5-922a-49a0-bb43-03d6022214f9)
 
-The design could be perfected if the skeleton was made to skale with the motor or we had chosen a different motor that not only satisfies what the robot needs but also that it fits confortably to the skeleton.
+The design could be perfected if the skeleton was made to scale with the motor or we had chosen a different motor that not only satisfies what the robot needs but also that it fits confortably to the skeleton.
 
 ## Steering
 ----
@@ -166,7 +166,7 @@ The steering system is composed of two identicar wheel holders connected with tw
 |----------|-----------------|------------------------|--------------|------------------|-----------------|
 |  3.3V~5V |   -30°C~+60°C   |          180           |   1.6KG/cm   |    PWM signal    |  Digital servo  |
 
-For the motor we used the Steren servo motor, it's an okay motor but we chose it because it was the one we had in hand. Although it is a cheap motor, it works perfectly with the design of the robot.
+For the motor we used the Steren servo motor, it's an okay motor but we chose it because it was the one we had in hand. Although it is a cheap motor, it works perfectly with the design of the robot. It also operates on low voltage (4.8–6V) and provides moderate torque for small mechanisms.
 
 ## Motherboard
 ----
@@ -177,12 +177,12 @@ For the motor we used the Steren servo motor, it's an okay motor but we chose it
 |--------------|-----------|---------|--------|---------|--------------------------|------------------|
 | ESP-WROOM-32 |   240MHz  |  448KB  |  520KB |   4MB   |  UART , I2C , SPI , CAN  |      6-18V       |
 
-For motor driver, we chose the Acebott ESP32, it's capable of controling not only the motors but the sensors as well.
+For motor driver, we chose the Acebott ESP32, it's capable of controling not only the motors but the sensors as well. It acts like a bridge between a microcontroller and motors, allowing us to safely control higher voltages and currents than the microcontroller can handle directly
 
 ## Skeleton/Chassis
 ----
 
-This year, instead of making the chassis out of lego, we changed it to 3D printed since it allowed it to be less bulky and lighter unlike the lego version. It also allowed for more complex designs such as in the steering and motor placements, these modifications although harder to add to the robot, it immensely helped the functionality and efficiency of the robot.
+This year, instead of making the chassis out of lego, we changed it to 3D printed since it allowed it to be less bulky and lighter unlike the lego version. It also allowed for more complex designs such as in the steering and motor placements, these modifications although harder to add to the robot, it immensely helped the functionality and efficiency of the robot. The model was first made in Tinkercad and later passed to Blender for final touches and took around 2 hours.
 
 ![image](https://github.com/user-attachments/assets/9f6c9e10-1ba4-45d7-8874-0108a5bd213f)
 
