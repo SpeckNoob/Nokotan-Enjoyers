@@ -169,6 +169,10 @@ The steering system is composed of two identicar wheel holders connected with tw
 
 For the motor we used the Steren servo motor, it's an okay motor but we chose it because it was the one we had in hand. Although it is a cheap motor, it works perfectly with the design of the robot. It also operates on low voltage (4.8–6V) and provides moderate torque for small mechanisms.
 
+<img width="698" height="343" alt="image" src="https://github.com/user-attachments/assets/6ee0966f-861a-400f-babe-f5133c9d5492" />
+
+The motor is placed between both axels to form an anti-ackerman system
+
 ## Motherboard
 ----
 
