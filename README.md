@@ -150,6 +150,10 @@ To connect the motor to the skeleton, we made an opening in the skeleton to fit 
 
 The design could be perfected if the skeleton was made to scale with the motor or we had chosen a different motor that not only satisfies what the robot needs but also that it fits confortably to the skeleton.
 
+<img width="592" height="346" alt="image" src="https://github.com/user-attachments/assets/2fe7c915-60aa-48d5-8ed1-5410b5651c7b" />
+
+(Full model is in the "models" repository)
+
 ## Steering
 ----
 We experimented with many steering mechanisms but the one we found most success was anti-Ackerman steering. Other methods where either too big and complex or didn't turn the right amount. Anti-Ackerman systems are usually used on racing cars where the vehicles must turn at high speeds and the tires might slip, the outer tire’s increased steering angle helps compensate for these slip angles, maximizing grip during high-speed cornering. Even though with this robot we can't reach those speeds where the wheels start slipping, the anti-Ackerman system is still the most effective and simple for this competition.
