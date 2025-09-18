@@ -33,7 +33,7 @@ Table of contents
   - [Camera](#camera)
 
     
-## The team
+## The Team
 ----
 
 Mark Chen, Age: 16
@@ -77,7 +77,6 @@ Hello, I'm Victor Sanchez, robotics profesor with experience in educational prog
 ----
 
 Team photo
-
 ----
 
 <img width="1600" height="1066" alt="image" src="https://github.com/user-attachments/assets/d38d130a-00b1-46c9-9a84-978d18311a11" />
