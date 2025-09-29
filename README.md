@@ -105,15 +105,15 @@ Points are awarded based on the performance of the robot. In the first round, po
 
 | Top | Bottom |
 |--------|---------|
-| ![WhatsApp Image 2025-06-30 at 15 49 33_9f3bbfec](https://github.com/user-attachments/assets/43aaa545-8b6f-4e37-bc9e-2e6eea242892) |![WhatsApp Image 2025-06-30 at 15 49 33_6a293fe1](https://github.com/user-attachments/assets/cedce72b-bcb6-45e5-8ab6-52f743984c7b) |
+| ![WhatsApp Image 2025-09-29 at 17 31 00_9bd73e38](https://github.com/user-attachments/assets/5bc4cb0e-379e-4304-a0b0-bef6aa3a4356) |![WhatsApp Image 2025-09-29 at 17 31 00_5592dadc](https://github.com/user-attachments/assets/609a60ce-571a-4f1c-b92a-ff5e90b37dea) |
 
 | Left | Right |
 |--------|---------|
-| ![WhatsApp Image 2025-06-30 at 15 49 33_56ea4051](https://github.com/user-attachments/assets/e097a6ab-d837-4754-b5e6-7f1f7045d6de)|![WhatsApp Image 2025-06-30 at 15 49 33_4cf76fe9](https://github.com/user-attachments/assets/52f4f881-262d-4f04-9244-fb63604a4117) |
+| ![WhatsApp Image 2025-09-29 at 17 31 00_614abe10](https://github.com/user-attachments/assets/febfba77-334b-451f-824c-3bbd20443457) |![WhatsApp Image 2025-09-29 at 17 31 00_24b984a5](https://github.com/user-attachments/assets/e625e5e9-3f4c-41dc-af76-11d5b5810f02) |
 
 | Front | Back |
 |--------|---------|
-|![WhatsApp Image 2025-06-30 at 15 49 33_d7e21712](https://github.com/user-attachments/assets/a18d05f4-239c-4867-8839-75a2133e14b0)|![WhatsApp Image 2025-06-30 at 15 49 33_67d5e010](https://github.com/user-attachments/assets/7c809ffd-461f-4f71-b14a-5659f50b11cb)
+|![WhatsApp Image 2025-09-29 at 17 31 01_d4408ce1](https://github.com/user-attachments/assets/b6114bb8-6f59-48c5-8010-1a200a2ec1e8) |![WhatsApp Image 2025-09-29 at 17 31 01_3e9ea6a2](https://github.com/user-attachments/assets/9faf0389-60b7-4266-a0bf-94007f93429e) |
 
 
 ## Video
