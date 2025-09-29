@@ -195,6 +195,10 @@ This year, instead of making the chassis out of lego, we changed it to 3D printe
 
 ![image](https://github.com/user-attachments/assets/9f6c9e10-1ba4-45d7-8874-0108a5bd213f)
 
+We had an accident not long before the competition and the piece that holds the camera broke, so we had to design a new piece that not only was more ressistant but also that gave the camera a better view, the piece was placed at the back of the robot and more elevated than the previous design.
+
+<img width="633" height="346" alt="image" src="https://github.com/user-attachments/assets/eed2861c-0f6b-46a6-b16d-3fc941c07ab7" />
+
 ## Energy management
 ----
 ## Battery:
