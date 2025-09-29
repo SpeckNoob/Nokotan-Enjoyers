@@ -925,135 +925,110 @@ This is the last update to the code before the 2025 national competition in Pana
 
 ```python
 
- /*******************************************************
- * Robot ESP32 — Salida + Lógica de Colores (Hor/Anti) *
- * Vuelta 1: aprende y memoriza movimientos (1→8)      *
- * Vueltas 2 y 3: reproduce exactamente lo memorizado  *
- * UART cámara: envía "verde\n" o "rojo\n"             *
- *******************************************************/
+/****************************************************
+ *  ROBOT 3x3 – ESP32 (Motores + Servo + VL53L1X + Cam UART)
+ *  - Secuencia de salida y maniobra final
+ *  - Lógica de colores HORARIO y ANTIHORARIO (completa)
+ *  - Maniobra especial + reintento del mismo índice
+ *  - Memoria de vuelta 1 (colores usados) → reproducir vuelta 2 y 3
+ ****************************************************/
 
 #include <Wire.h>
 #include <VL53L1X.h>
 #include <ESP32Servo.h>
 #include "Arduino.h"
 
-// =====================================================
-// ============ PARÁMETROS (MODULAR con #define) =======
-// =====================================================
-
-// ----- Multiplexores (láser) -----
+// =================== Multiplexores / VL53 ===================
 #define MUX_LEFT_ADDR   0x70
 #define MUX_RIGHT_ADDR  0x74
 #define MUX_CHANNEL_0   0
-
-// ----- Pines Servo/Motor -----
-#define SERVO_PIN       25
-#define SHCP_PIN        18
-#define EN_PIN          16
-#define DATA_PIN        5
-#define STCP_PIN        17
-#define PWM1_PIN        19
-
-// ----- Servo (ángulos) -----
-#define SERVO_LEFT        5
-#define SERVO_CENTER      35   // “centro” normal (cuando último giro fue DER)
-#define SERVO_CENTER_L    45   // “centro” cuando último giro fue IZQ
-#define SERVO_RIGHT       75
-
-// ----- UART Cámara (Serial1) -----
-#define CAM_BAUD        115200
-#define CAM_RX          3
-#define CAM_TX          1
-
-// ----- Velocidades/pausas/estabilización -----
-#define PWM_SPEED_FWD     255   // Para MoveForward()
-#define PWM_SPEED_REV     128   // Para retroceder
-#define ESTABILIZA_MS     130
-#define PAUSA_MS          150
-#define PASO_AVANZAR_MS   250
-#define PASO_RETRO_MS     230
-
-// ----- Salida del estacionamiento (micro-ciclos) -----
-#define NUM_CICLOS_IZQ    9     // salida grande hacia IZQ (antiho) 9 ciclos
-#define NUM_CICLOS_DER    6     // salida grande hacia DER (horario) 6 ciclos
-
-// ----- Maniobra final (giro contrario) -----
-#define FINAL_PRE_AVANCE_MS  300
-#define FINAL_AVANZAR_MS     1600
-#define FINAL_RETRO1_MS      500
-#define FINAL_AVANZAR2_MS    600
-#define FINAL_RETRO2_MS      1000
-
-// ----- Tiempos base de esquivas / rectas -----
-#define T_GREEN1_LEFT_MS       1400   // 1.4 s (para primer secuencia VERDE HORARIO)
-#define T_GREEN1_RIGHT_MS      1400   // 1.4 s
-#define T_GREEN1_RIGHT2_MS     2800   // 2.8 s (giro largo horario)
-#define T_GREEN1_RETRO1_MS     500    // 0.5 s
-#define T_GREEN1_RETRO2_MS     1000   // 1.0 s
-
-#define T_CONT_TURN_MS         1600   // 1.6 s (pares)
-#define T_RECTO_1S             1000
-#define T_RECTO_2S             2000
-#define T_GIRO_LARGO           2800   // 2.8 s (regla: todo >2s es 2.8s)
-
-#define T_RETRO_03S            300
-#define T_RETRO_05S            500
-#define T_RETRO_10S            10000  // para “esperar 10 s” cuando aplique (sin moverse)
-
-// ----- Colores -----
-#define C_VERDE   'G'
-#define C_ROJO    'R'
-#define C_NINGUNO 'N'
-
-// =====================================================
-// ===================== HARDWARE =======================
-// =====================================================
 VL53L1X sensorLeft, sensorRight;
+
+// =================== Servo ===================
+#define SERVO_PIN        25
+#define SERVO_LEFT        5
+#define SERVO_CENTER     35   // centro "normal" (luego de terminar en giro a la DER)
+#define SERVO_CENTER_L   45   // centro "luego de terminar en giro a la IZQ"
+#define SERVO_RIGHT      75
 Servo miServo;
 
+// =================== Motor (shift register) ===================
+#define SHCP_PIN 18
+#define EN_PIN   16
+#define DATA_PIN 5
+#define STCP_PIN 17
+#define PWM1_PIN 19
 const int M1_Forward = 128;
 const int M1_Reverse = 64;
 const int M1_Stop    = 0;
 
-// =====================================================
-// ================= MEMORIA DE MOVIMIENTOS ============
-// =====================================================
-// Grabamos cada acción ejecutada en la vuelta 1 y luego
-// la repetimos en vuelta 2 y vuelta 3.
+// =================== UART CÁMARA (Serial1: RX=3, TX=1) ===================
+#define CAM_BAUD 115200
+#define CAM_RX   3
+#define CAM_TX   1
 
-enum ActKind : uint8_t {
-  ACT_FWD, ACT_REV, ACT_TURN_L, ACT_TURN_R, ACT_SERVO_C35, ACT_SERVO_C45, ACT_STOP, ACT_DELAY
-};
+// =================== Parámetros (MODULAR) ===================
+// Micro-pasos salida
+#define PASO_AVANZAR_MS      250
+#define PASO_RETRO_MS        230
+#define PAUSA_MS             150
+#define ESTABILIZA_MS        130
 
-struct Action {
-  ActKind kind;
-  int ms;          // duración para movimientos/pausas
-};
+// Maniobra final (giro contrario)
+#define FINAL_PRE_AVANCE_MS  300
+#define FINAL_AVANZAR_MS     1600
+#define FINAL_RETRO1_MS       500
+#define FINAL_AVANZAR2_MS     600
+#define FINAL_RETRO2_MS      1000
 
-#define MAX_ACTIONS 1200
-Action actions[MAX_ACTIONS];
-int actions_len = 0;
+// Timings base de colores
+#define GREEN1_LEFT_MS       1400  // 1.4 s (Ajustado a tu última tabla de horario 1.º=VERDE)
+#define GREEN1_RIGHT_MS      1400
+#define GREEN1_RIGHT2_MS     2800
+#define GREEN1_FINAL_RETRO   1000
+#define GREEN1_MID_RETRO      500   // retro tras centro en 1.º=VERDE (horario)
 
-bool recording_enabled = true;   // Vuelta 1: ON. Vueltas 2/3: OFF (replay).
-uint8_t lap_index = 1;           // 1: aprende, 2: replay, 3: replay
+#define RED1_RIGHT_MS        1600
+#define RED1_LEFT_MS         1600
 
-// =====================================================
-// ===================== UTILIDADES ====================
-// =====================================================
-void recordAction(ActKind k, int ms) {
-  if (!recording_enabled) return;
-  if (actions_len < MAX_ACTIONS) {
-    actions[actions_len++] = {k, ms};
-  }
-}
+#define SEG_1S               1000
+#define SEG_2S               2000
+#define GIRO_LARGO_MS        2800   // 2.8 s (giro largo)
 
+// Avances/generales
+#define CONT_TURN_MS         2000   // 2.0 s para tramos simétricos
+#define CONT_FORWARD_MS      2000
+#define RETRO_CORTO_MS        300
+#define RETRO_LARGO_MS       2000
+
+// Timeouts SOLO en ramas que admiten "NINGUNO"
+#define WAIT_NO_COLOR_MS    10000
+
+// Salida del estacionamiento (ciclos)
+#define NUM_CICLOS_IZQ  9   // izquierda (antiho) – micro-ciclos
+#define NUM_CICLOS_DER  6   // derecha  (horario) – micro-ciclos
+
+// =================== Estado global ===================
+enum Sentido { HORARIO=0, ANTIHORARIO=1 };
+Sentido sentido = HORARIO;  // se fija tras la salida
+
+// Memoria de colores “usados” por la lógica (vuelta 1)
+char memColores[9];           // índices 1..8 (‘G’, ‘R’, ‘N’)
+bool memoriaLlena = false;
+
+// Control de vueltas
+uint8_t vueltaActual = 1;     // 1, 2, 3
+bool usarMemoria = false;     // true en vueltas 2 y 3
+
+// =================== Utilidades MUX ===================
 void selectOnlyOneMux(uint8_t muxAddr) {
-  Wire.beginTransmission(MUX_LEFT_ADDR);  Wire.write(0x00);                Wire.endTransmission();
-  Wire.beginTransmission(MUX_RIGHT_ADDR); Wire.write(0x00);                Wire.endTransmission();
+  Wire.beginTransmission(MUX_LEFT_ADDR);  Wire.write(0x00); Wire.endTransmission();
+  Wire.beginTransmission(MUX_RIGHT_ADDR); Wire.write(0x00); Wire.endTransmission();
   Wire.beginTransmission(muxAddr);        Wire.write(1 << MUX_CHANNEL_0);  Wire.endTransmission();
   delay(2);
 }
 
+// =================== Motores ===================
 void MoveMotor(int dir, int speed) {
   if (speed < 0)   speed = 0;
   if (speed > 255) speed = 255;
@@ -1064,12 +1039,12 @@ void MoveMotor(int dir, int speed) {
   digitalWrite(STCP_PIN, HIGH);
 }
 
-void MoveForwardRaw() {
+void MoveForward() {
   digitalWrite(EN_PIN, LOW);
   digitalWrite(STCP_PIN, LOW);
   shiftOut(DATA_PIN, SHCP_PIN, MSBFIRST, M1_Forward);
   digitalWrite(STCP_PIN, HIGH);
-  analogWrite(PWM1_PIN, PWM_SPEED_FWD);
+  digitalWrite(PWM1_PIN, HIGH);
 }
 
 void StopMotor() {
@@ -1079,568 +1054,545 @@ void StopMotor() {
   digitalWrite(STCP_PIN, HIGH);
 }
 
-void retrocederRaw(int ms) {
-  MoveMotor(M1_Reverse, PWM_SPEED_REV);
+void retro(int ms) {
+  MoveMotor(M1_Reverse, 128);
   delay(ms);
   StopMotor();
 }
 
-void servoCenter35() { miServo.write(SERVO_CENTER); delay(ESTABILIZA_MS); }
-void servoCenter45() { miServo.write(SERVO_CENTER_L); delay(ESTABILIZA_MS); }
-
-// ----- Primitivas de movimiento (graban memoria) -----
-void avanzarRectoMs(int ms, bool useCenter45=false) {
-  if (useCenter45) servoCenter45();
-  else             servoCenter35();
-  MoveForwardRaw();
+// =================== Movimientos compuestos ===================
+void avanzarRecto(int ms, int centro) {
+  StopMotor();
+  miServo.write(centro);
+  delay(ESTABILIZA_MS);
+  MoveForward();
   delay(ms);
   StopMotor();
-  recordAction(ACT_FWD, ms);
 }
-
-void girarIzqMs(int ms) {
-  miServo.write(SERVO_LEFT); delay(ESTABILIZA_MS);
-  MoveForwardRaw();
+void avanzarConGiro(int angServo, int ms) {
+  StopMotor();
+  miServo.write(angServo);
+  delay(ESTABILIZA_MS);
+  MoveForward();
   delay(ms);
   StopMotor();
-  recordAction(ACT_TURN_L, ms);
 }
+inline void giroLargoHorario()    { avanzarConGiro(SERVO_RIGHT, GIRO_LARGO_MS); }
+inline void giroLargoAntiHorario(){ avanzarConGiro(SERVO_LEFT,  GIRO_LARGO_MS); }
 
-void girarDerMs(int ms) {
-  miServo.write(SERVO_RIGHT); delay(ESTABILIZA_MS);
-  MoveForwardRaw();
-  delay(ms);
-  StopMotor();
-  recordAction(ACT_TURN_R, ms);
-}
+void servoCentroTrasDer() { miServo.write(SERVO_CENTER);   delay(ESTABILIZA_MS); }
+void servoCentroTrasIzq() { miServo.write(SERVO_CENTER_L); delay(ESTABILIZA_MS); }
 
-void retroMs(int ms) {
-  retrocederRaw(ms);
-  recordAction(ACT_REV, ms);
-}
-
-void pausaMs(int ms) {
-  delay(ms);
-  recordAction(ACT_DELAY, ms);
-}
-
-void setServoC35() { miServo.write(SERVO_CENTER); delay(ESTABILIZA_MS); recordAction(ACT_SERVO_C35, 0); }
-void setServoC45() { miServo.write(SERVO_CENTER_L); delay(ESTABILIZA_MS); recordAction(ACT_SERVO_C45, 0); }
-
-// =====================================================
-// ================== LÁSER / DISTANCIA ================
-// =====================================================
-int lecturaSimple(VL53L1X &sensor, uint8_t muxAddr) {
-  selectOnlyOneMux(muxAddr);
-  int v = sensor.read();
-  return (v > 0) ? v : 0;
-}
-
-int lecturaPromedio(VL53L1X &sensor, uint8_t muxAddr, uint8_t n=3) {
-  long s=0; uint8_t c=0;
-  for (uint8_t i=0;i<n;i++) { int v=lecturaSimple(sensor, muxAddr); if (v>0){s+=v; c++;} delay(10); }
-  return (c==0)?0:(int)(s/c);
-}
-
-// =====================================================
-// ================== SALIDA ESTACIONAMIENTO ===========
-// =====================================================
-inline void microCiclo(int anguloLado, bool centroIzq) {
-  // avanzar corto con giro
-  miServo.write(anguloLado); delay(ESTABILIZA_MS);
-  MoveForwardRaw(); delay(PASO_AVANZAR_MS); StopMotor();
-  // centrar + retro corto
-  if (centroIzq) servoCenter45(); else servoCenter35();
-  retrocederRaw(PASO_RETRO_MS);
-  delay(PAUSA_MS);
-  // Registrar (modo simple: solo giro y retro)
-  if (anguloLado==SERVO_LEFT)  recordAction(ACT_TURN_L, PASO_AVANZAR_MS);
-  else                          recordAction(ACT_TURN_R, PASO_AVANZAR_MS);
-  recordAction((ActKind)ACT_REV, PASO_RETRO_MS);
-}
-
-void secuenciaSalidaIzq() { // 9 ciclos
-  for (uint8_t i=0;i<NUM_CICLOS_IZQ;i++) microCiclo(SERVO_LEFT, true);
-}
-void secuenciaSalidaDer() { // 6 ciclos
-  for (uint8_t i=0;i<NUM_CICLOS_DER;i++) microCiclo(SERVO_RIGHT, false);
-}
-
-void maniobraFinalGiroContrario(bool eligioIzq) {
-  // Recto 0.3s (servo centro=35 por defecto)
-  avanzarRectoMs(FINAL_PRE_AVANCE_MS, false);
-
-  bool contrarioIzq = !eligioIzq;
-  if (contrarioIzq) {
-    // IZQ 1.6 → centro45 + retro 0.5 → IZQ 0.6 → centro45 + retro 1.0
-    girarIzqMs(FINAL_AVANZAR_MS);
-    setServoC45(); retroMs(FINAL_RETRO1_MS);
-    girarIzqMs(FINAL_AVANZAR2_MS);
-    setServoC45(); retroMs(FINAL_RETRO2_MS);
-  } else {
-    // DER 1.6 → centro35 + retro 0.5 → DER 0.6 → centro35 + retro 1.0
-    girarDerMs(FINAL_AVANZAR_MS);
-    setServoC35(); retroMs(FINAL_RETRO1_MS);
-    girarDerMs(FINAL_AVANZAR2_MS);
-    setServoC35(); retroMs(FINAL_RETRO2_MS);
-  }
-}
-
-// =====================================================
-// ==================== UART CÁMARA ====================
-// =====================================================
-void limpiarBufferCamara() {
-  while (Serial1.available()) Serial1.read();
-}
+// =================== Cámara ===================
+void limpiarBufferCamara() { while (Serial1.available()) Serial1.read(); }
 
 char leerColorBloqueante() {
   limpiarBufferCamara();
   for (;;) {
     if (Serial1.available()) {
-      String s = Serial1.readStringUntil('\n'); s.trim(); s.toLowerCase();
-      if (s=="verde") return C_VERDE;
-      if (s=="rojo")  return C_ROJO;
+      String t = Serial1.readStringUntil('\n');
+      t.trim(); t.toLowerCase();
+      if (t == "verde") return 'G';
+      if (t == "rojo")  return 'R';
     }
     delay(2);
   }
 }
 
-char leerColorConTimeout(unsigned long t_ms) {
+char leerColorConTimeout(unsigned long timeout_ms) {
   limpiarBufferCamara();
   unsigned long t0 = millis();
-  while (millis() - t0 < t_ms) {
+  while (millis() - t0 < timeout_ms) {
     if (Serial1.available()) {
-      String s = Serial1.readStringUntil('\n'); s.trim(); s.toLowerCase();
-      if (s=="verde") return C_VERDE;
-      if (s=="rojo")  return C_ROJO;
+      String t = Serial1.readStringUntil('\n');
+      t.trim(); t.toLowerCase();
+      if (t == "verde") return 'G';
+      if (t == "rojo")  return 'R';
     }
     delay(2);
   }
-  return C_NINGUNO;
+  return 'N';
 }
 
-// =====================================================
-// ========== MANIOBRAS ESPECIALES (Hor/Anti) ==========
-// =====================================================
+// Interfaz de lectura para vivo/memoria
+char leerColorPaso(uint8_t idx, bool permitirNinguno, unsigned long to_ms) {
+  if (usarMemoria) {
+    char c = memColores[idx];
+    Serial.print("[MEM paso "); Serial.print(idx); Serial.print("] -> ");
+    Serial.println(c);
+    return c;
+  } else {
+    char c = permitirNinguno ? leerColorConTimeout(to_ms) : leerColorBloqueante();
+    // Guardar en memoria vuelta 1
+    if (vueltaActual == 1) memColores[idx] = c;
+    return c;
+  }
+}
+
+// =================== Medición distancia (para salida) ===================
+int lecturaSimple(VL53L1X &sensor, uint8_t muxAddr) {
+  selectOnlyOneMux(muxAddr);
+  int v = sensor.read();
+  return (v > 0) ? v : 0;
+}
+int lecturaPromedio(VL53L1X &sensor, uint8_t muxAddr, uint8_t n=3) {
+  long s=0; uint8_t val=0;
+  for (uint8_t i=0;i<n;i++) { int x=lecturaSimple(sensor,muxAddr); if (x>0){s+=x;val++;} delay(10); }
+  if (!val) return 0;
+  return (int)(s/val);
+}
+
+// =================== Secuencia de salida (micro-ciclos) ===================
+inline void microCiclo(int angLado, int centroAlVolver) {
+  avanzarConGiro(angLado, PASO_AVANZAR_MS);
+  miServo.write(centroAlVolver);
+  delay(ESTABILIZA_MS);
+  retro(PASO_RETRO_MS);
+  delay(PAUSA_MS);
+}
+void secuenciaSalidaIzquierda() { // antiho
+  for (uint8_t i=0;i<NUM_CICLOS_IZQ;i++) microCiclo(SERVO_LEFT, SERVO_CENTER_L);
+}
+void secuenciaSalidaDerecha() { // horario
+  for (uint8_t i=0;i<NUM_CICLOS_DER;i++) microCiclo(SERVO_RIGHT, SERVO_CENTER);
+}
+
+// =================== Maniobra final (giro contrario al lado elegido) ===================
+void maniobraFinal(bool eligioIzquierda) {
+  // 1) Recto 0.3 s
+  avanzarRecto(FINAL_PRE_AVANCE_MS, SERVO_CENTER);
+
+  // 2) Giro contrario 1.6 s
+  const bool contrarioEsIzq = !eligioIzquierda;
+  const int angContrario = contrarioEsIzq ? SERVO_LEFT : SERVO_RIGHT;
+  const int centroSegun = contrarioEsIzq ? SERVO_CENTER_L : SERVO_CENTER;
+  avanzarConGiro(angContrario, FINAL_AVANZAR_MS);
+
+  // 3) Centro y retro 0.5 s
+  miServo.write(centroSegun); delay(ESTABILIZA_MS);
+  retro(FINAL_RETRO1_MS);
+
+  // 4) Mismo giro 0.6 s
+  avanzarConGiro(angContrario, FINAL_AVANZAR2_MS);
+
+  // 5) Centro y retro 1.0 s
+  miServo.write(centroSegun); delay(ESTABILIZA_MS);
+  retro(FINAL_RETRO2_MS);
+}
+
+// =================== Maniobras Especiales ===================
+// HORARIO: NINGUNO → IZQ 0.5 → DER 0.5 → DER 2.8 → centro → retro 2.0
 void maniobraEspecialHorario() {
-  // IZQ 0.5 → DER 0.5 → DER 2.8 → centro (35) → retro 2.0
-  girarIzqMs(T_RETRO_05S);
-  girarDerMs(T_RETRO_05S);
-  girarDerMs(T_GIRO_LARGO);
-  setServoC35();
-  retroMs(2000);
+  // IZQ 0.5
+  avanzarConGiro(SERVO_LEFT, 500);
+  // DER 0.5
+  avanzarConGiro(SERVO_RIGHT, 500);
+  // DER 2.8
+  giroLargoHorario();
+  // centro+retro 2.0
+  servoCentroTrasDer();
+  retro(RETRO_LARGO_MS);
+}
+// ANTIHORARIO: NINGUNO → DER 0.5 → IZQ 0.5 → IZQ 2.8 → centro(45) → retro 2.0
+void maniobraEspecialAntiHo() {
+  // DER 0.5
+  avanzarConGiro(SERVO_RIGHT, 500);
+  // IZQ 0.5
+  avanzarConGiro(SERVO_LEFT, 500);
+  // IZQ 2.8
+  giroLargoAntiHorario();
+  // centro+retro 2.0
+  servoCentroTrasIzq();
+  retro(RETRO_LARGO_MS);
 }
 
-void maniobraEspecialAntiho() {
-  // DER 0.5 → IZQ 0.5 → IZQ 2.8 → centro (45) → retro 2.0
-  girarDerMs(T_RETRO_05S);
-  girarIzqMs(T_RETRO_05S);
-  girarIzqMs(T_GIRO_LARGO);
-  setServoC45();
-  retroMs(2000);
-}
+// =================== Núcleo de lógica: HORARIO ===================
+void ejecutarHorario() {
+  Serial.println("== LÓGICA HORARIO (giro largo DER 2.8 s) ==");
 
-// =====================================================
-// =========== LÓGICA DE COLORES — HORARIO =============
-// (giro largo = DER 2.8 s, regla 8.º color aplicada)
-// =====================================================
-void coloresHorario_vuelta1() {
-  // 1.º color
-  char c1 = leerColorBloqueante();
+  // ---------- 1.º color ----------
+  Serial.println("[1] Esperando color...");
+  char c1 = leerColorPaso(1, false, 0);
 
-  if (c1==C_VERDE) {
-    // IZQ 1.4 → DER 1.4 → DER 2.8 → servo recto → retro 1.0
-    girarIzqMs(T_GREEN1_LEFT_MS);
-    girarDerMs(T_GREEN1_RIGHT_MS);
-    girarDerMs(T_GIRO_LARGO);
-    setServoC35();
-    retroMs(1000);
-  } else { // ROJO
-    // DER 1.6 → IZQ 1.6 → quieto
-    girarDerMs(1600);
-    girarIzqMs(1600);
+  if (c1=='G') {
+    // VERDE → IZQ 1.4 → DER 1.4 → DER 2.8 → centro → retro 1.0 → leer 2.º
+    avanzarConGiro(SERVO_LEFT,  GREEN1_LEFT_MS);
+    avanzarConGiro(SERVO_RIGHT, GREEN1_RIGHT_MS);
+    giroLargoHorario();
+    servoCentroTrasDer();
+    retro(GREEN1_FINAL_RETRO);
+  } else {
+    // ROJO → DER 1.6 → IZQ 1.6 → quieto
+    avanzarConGiro(SERVO_RIGHT, RED1_RIGHT_MS);
+    avanzarConGiro(SERVO_LEFT,  RED1_LEFT_MS);
     StopMotor();
   }
   limpiarBufferCamara();
 
-  // 2.º color (depende del 1.º)
-  char c2 = leerColorBloqueante();
-
-  if (c1==C_VERDE) {
-    if (c2==C_VERDE) {
-      girarIzqMs(T_CONT_TURN_MS);
-      girarDerMs(T_CONT_TURN_MS);
-      setServoC35(); StopMotor();
-    } else if (c2==C_ROJO) {
-      girarDerMs(T_CONT_TURN_MS);
-      girarIzqMs(T_CONT_TURN_MS);
-      setServoC45(); StopMotor();
-    } else {
-      // (En tu última instrucción: quitar NINGUNO aquí cuando 1.º=VERDE)
-      // Si aun así ocurre en práctica:
-      maniobraEspecialHorario();
-    }
-  } else { // c1==ROJO
-    if (c2==C_VERDE) {
-      avanzarRectoMs(T_RECTO_1S, false);
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); StopMotor();
-    } else if (c2==C_ROJO) {
-      retroMs(T_RETRO_03S);
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); StopMotor();
-    } else {
-      // NINGUNO sí aplica aquí
-      maniobraEspecialHorario();
-    }
-  }
-  limpiarBufferCamara();
-
-  // 3.º color (depende del 2.º)
-  char c3 = leerColorConTimeout(0); // bloqueante (tú pediste sin timeout salvo donde lo definiste explícito)
-
-  if (c2==C_VERDE) {
-    if (c3==C_ROJO) {
-      girarDerMs(2000); girarIzqMs(2000);
-      setServoC45(); StopMotor();
-    } else {
-      // VERDE o NINGUNO:
-      avanzarRectoMs(T_RECTO_2S, false);
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); retroMs(1000);
-    }
-  } else { // c2==ROJO
-    if (c3==C_VERDE) {
-      girarIzqMs(2000); girarDerMs(2000);
-      avanzarRectoMs(T_RECTO_1S, false);
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); retroMs(1000);
-    } else {
-      // ROJO o NINGUNO
-      avanzarRectoMs(T_RECTO_2S, false);
-      StopMotor();
-    }
-  }
-  limpiarBufferCamara();
-
-  // 4.º color — según bloque grande que nos diste
-  char c4 = leerColorBloqueante();
-
-  if ( (c2==C_VERDE) && (c3==C_VERDE || c3==C_NINGUNO) ) {
-    if (c4==C_VERDE) { girarIzqMs(1600); girarDerMs(1600); setServoC35(); StopMotor(); }
-    else if (c4==C_ROJO) { girarDerMs(1600); girarIzqMs(1600); setServoC45(); StopMotor(); }
-  } else if ( (c2==C_VERDE) && (c3==C_ROJO) ) {
-    if (c4==C_VERDE) {
-      avanzarRectoMs(T_RECTO_1S, false);
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); retroMs(1000);
-    } else if (c4==C_ROJO) {
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); retroMs(1000);
-    }
-  } else if ( (c2==C_ROJO) && (c3==C_VERDE) ) {
-    if (c4==C_VERDE) { girarIzqMs(1600); girarDerMs(1600); setServoC35(); StopMotor(); }
-    else if (c4==C_ROJO) { girarDerMs(1600); girarIzqMs(1600); setServoC45(); StopMotor(); }
-  } else { // (c2==ROJO) && (c3==ROJO o N)
-    if (c4==C_VERDE) {
-      avanzarRectoMs(T_RECTO_1S, false);
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); retroMs(1000);
-    } else if (c4==C_ROJO) {
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); retroMs(1000);
-    }
-  }
-  limpiarBufferCamara();
-
-  // 5.º color
-  char c5 = leerColorBloqueante();
-
-  if (c4==C_VERDE) {
-    if (c5==C_ROJO) { girarDerMs(2000); girarIzqMs(2000); setServoC45(); StopMotor(); }
-    else { // VERDE o N
-      avanzarRectoMs(T_RECTO_2S, false);
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); retroMs(1000);
-    }
-  } else { // c4==ROJO
-    if (c5==C_VERDE) {
-      girarIzqMs(2000); girarDerMs(2000);
-      avanzarRectoMs(T_RECTO_1S, false);
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); retroMs(1000);
-    } else {
-      // ROJO o N
-      avanzarRectoMs(T_RECTO_2S, false);
-      StopMotor();
-    }
-  }
-  limpiarBufferCamara();
-
-  // 6.º color
-  char c6 = leerColorBloqueante();
-
-  if (c5==C_VERDE) {
-    if (c6==C_VERDE) { girarIzqMs(1600); girarDerMs(1600); setServoC35(); StopMotor(); }
-    else if (c6==C_ROJO) { girarDerMs(1600); girarIzqMs(1600); setServoC45(); StopMotor(); }
-  } else { // c5==ROJO
-    if (c6==C_VERDE) {
-      avanzarRectoMs(T_RECTO_1S, false);
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); retroMs(1000); StopMotor();
+  // ---------- 2.º color ----------
+  Serial.println("[2] Leyendo 2.º (reglas según 1.º)...");
+  char c2;
+  if (c1=='G') {
+    // sin NINGUNO aquí (bloqueante)
+    c2 = leerColorPaso(2, false, 0);
+    if (c2=='G') {
+      // IZQ 1.6 → DER 1.6 → quieto (servo=35)
+      avanzarConGiro(SERVO_LEFT,  1600);
+      avanzarConGiro(SERVO_RIGHT, 1600);
+      servoCentroTrasDer(); StopMotor();
     } else { // ROJO
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); retroMs(1000); StopMotor();
+      avanzarConGiro(SERVO_RIGHT, 1600);
+      avanzarConGiro(SERVO_LEFT,  1600);
+      servoCentroTrasIzq(); StopMotor();
     }
-  }
-  limpiarBufferCamara();
-
-  // 7.º color
-  char c7 = leerColorBloqueante();
-
-  if (c6==C_VERDE) {
-    if (c7==C_ROJO) { girarDerMs(2000); girarIzqMs(2000); setServoC45(); StopMotor(); }
-    else { // VERDE
-      avanzarRectoMs(T_RECTO_2S, false);
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); retroMs(1000);
-    }
-  } else { // c6==ROJO
-    if (c7==C_VERDE) {
-      girarIzqMs(2000); girarDerMs(2000);
-      avanzarRectoMs(T_RECTO_1S, false);
-      girarDerMs(T_GIRO_LARGO);
-      setServoC35(); retroMs(1000);
-    } else { // ROJO
-      avanzarRectoMs(T_RECTO_2S, false);
-      StopMotor();
-    }
-  }
-  limpiarBufferCamara();
-
-  // 8.º color — regla especial (horario):
-  // Si 7.º=VERDE → solo recto 1s
-  // Si 7.º=ROJO → maniobra especial horario y luego recto 1s
-  char c8 = leerColorBloqueante(); // lectura para cerrar ciclo
-
-  if (c7==C_VERDE) {
-    avanzarRectoMs(T_RECTO_1S, false);
-  } else { // c7==ROJO
-    maniobraEspecialHorario();
-    avanzarRectoMs(T_RECTO_1S, false);
-  }
-  StopMotor();
-  limpiarBufferCamara();
-}
-
-// =====================================================
-// ===== LÓGICA DE COLORES — ANTIHORARIO (IZQ 2.8) =====
-// (reglas según tu último bloque + regla 8.º color) ====
-// =====================================================
-void coloresAntiho_vuelta1() {
-  // 1.º color
-  char c1 = leerColorBloqueante();
-
-  if (c1==C_ROJO) {
-    // DER 1.4 → IZQ 1.4 → IZQ 2.8 → centro(45) → retro 1.0
-    girarDerMs(1400);
-    girarIzqMs(1400);
-    girarIzqMs(T_GIRO_LARGO);
-    setServoC45();
-    retroMs(1000);
-  } else { // VERDE
-    girarIzqMs(1600);
-    girarDerMs(1600);
-    StopMotor();
-  }
-  limpiarBufferCamara();
-
-  // 2.º color (esta pauta se repite en 4.º y 6.º por contexto)
-  char c2 = leerColorBloqueante();
-
-  if (c1==C_VERDE) {
-    if (c2==C_VERDE) {
-      retroMs(T_RETRO_03S);
-      girarIzqMs(T_GIRO_LARGO);
-      setServoC45(); retroMs(1000);
-    } else if (c2==C_ROJO) {
-      avanzarRectoMs(T_RECTO_1S, true);
-      girarIzqMs(T_GIRO_LARGO);
-      setServoC45(); retroMs(1000);
-    } else {
-      // NINGUNO → maniobra especial ANTIHO y reintenta (aquí solo ejecutamos la maniobra y seguimos)
-      maniobraEspecialAntiho();
-    }
-  } else { // c1 == ROJO
-    if (c2==C_VERDE) {
-      girarIzqMs(1600); girarDerMs(1600); StopMotor();
-    } else if (c2==C_ROJO) {
-      girarDerMs(1600); girarIzqMs(1600); StopMotor();
-    } else {
-      // (eliminado en tu instrucción; si ocurre, aplicar especial)
-      maniobraEspecialAntiho();
-    }
-  }
-  limpiarBufferCamara();
-
-  // 3.º color (patrón se repite en 5.º y 7.º)
-  char c3 = leerColorBloqueante();
-
-  if (c2==C_ROJO) {
-    if (c3==C_VERDE) {
-      girarIzqMs(2000); girarDerMs(2000); StopMotor();
-    } else {
-      // ROJO o N
-      avanzarRectoMs(T_RECTO_2S, true);
-      girarIzqMs(T_GIRO_LARGO);
-      setServoC45(); retroMs(1000);
-    }
-  } else { // c2==VERDE
-    if (c3==C_ROJO) {
-      girarDerMs(2000); girarIzqMs(2000);
-      girarIzqMs(T_GIRO_LARGO);
-      setServoC45(); retroMs(1000);
-    } else {
-      // VERDE o N → recto 2.0, quieto
-      avanzarRectoMs(T_RECTO_2S, true);
-      StopMotor();
-    }
-  }
-  limpiarBufferCamara();
-
-  // 4.º color
-  char c4 = leerColorBloqueante();
-
-  if (c3==C_ROJO) {
-    if (c4==C_VERDE) { girarIzqMs(1600); girarDerMs(1600); StopMotor(); }
-    else if (c4==C_ROJO) { girarDerMs(1600); girarIzqMs(1600); StopMotor(); }
-  } else { // c3==VERDE o N
-    if (c4==C_ROJO) {
-      avanzarRectoMs(T_RECTO_1S, true);
-      girarIzqMs(T_GIRO_LARGO);
-      setServoC45(); retroMs(1000); StopMotor();
-    } else if (c4==C_VERDE) {
-      girarIzqMs(T_GIRO_LARGO);
-      setServoC45(); retroMs(1000); StopMotor();
-    } else {
-      // NINGUNO → reemplazar por maniobra especial ANTIHO
-      maniobraEspecialAntiho();
-    }
-  }
-  limpiarBufferCamara();
-
-  // 5.º color
-  char c5 = leerColorBloqueante();
-
-  if (c4==C_VERDE) {
-    if (c5==C_ROJO) { girarDerMs(2000); girarIzqMs(2000); StopMotor(); }
-    else { // VERDE o N
-      avanzarRectoMs(T_RECTO_2S, true);
-      girarIzqMs(T_GIRO_LARGO);
-      setServoC45(); retroMs(1000);
-    }
-  } else { // c4==ROJO
-    if (c5==C_VERDE) {
-      girarIzqMs(2000); girarDerMs(2000); StopMotor();
-      girarIzqMs(T_GIRO_LARGO); setServoC45(); retroMs(1000);
-    } else {
-      // ROJO
-      avanzarRectoMs(T_RECTO_2S, true);
-      StopMotor();
-    }
-  }
-  limpiarBufferCamara();
-
-  // 6.º color
-  char c6 = leerColorBloqueante();
-
-  if (c5==C_VERDE) {
-    if (c6==C_VERDE) { girarIzqMs(1600); girarDerMs(1600); StopMotor(); }
-    else if (c6==C_ROJO) { girarDerMs(1600); girarIzqMs(1600); StopMotor(); }
-    else { // N
-      // esperar 10s → recto 2.0 → IZQ 2.8 → retro 1.0
-      pausaMs(T_RETRO_10S);
-      avanzarRectoMs(T_RECTO_2S, true);
-      girarIzqMs(T_GIRO_LARGO); setServoC45(); retroMs(1000);
-    }
-  } else { // c5==ROJO o N
-    if (c6==C_VERDE) {
-      avanzarRectoMs(T_RECTO_1S, true);
-      girarIzqMs(T_GIRO_LARGO); setServoC45(); retroMs(1000); StopMotor();
-    } else if (c6==C_ROJO) {
-      girarIzqMs(T_GIRO_LARGO); setServoC45(); retroMs(1000); StopMotor();
-    } else {
-      pausaMs(T_RETRO_10S);
-      avanzarRectoMs(T_RECTO_2S, true);
-      girarIzqMs(T_GIRO_LARGO); setServoC45(); retroMs(1000);
-    }
-  }
-  limpiarBufferCamara();
-
-  // 7.º color
-  char c7 = leerColorBloqueante();
-
-  if (c6==C_VERDE) {
-    if (c7==C_ROJO) { girarDerMs(2000); girarIzqMs(2000); StopMotor(); }
-    else if (c7==C_VERDE) {
-      avanzarRectoMs(T_RECTO_2S, true);
-      girarIzqMs(T_GIRO_LARGO); setServoC45(); retroMs(1000);
+  } else {
+    // 1.º=ROJO: admite NINGUNO con maniobra especial
+    c2 = leerColorPaso(2, true, WAIT_NO_COLOR_MS);
+    if (c2=='G') {
+      // recto 1.0 → DER 2.8 → quieto
+      avanzarRecto(SEG_1S, SERVO_CENTER);
+      giroLargoHorario();
+      servoCentroTrasDer(); StopMotor();
+    } else if (c2=='R') {
+      // retro 0.3 → DER 2.8 → quieto
+      retro(RETRO_CORTO_MS);
+      giroLargoHorario();
+      servoCentroTrasDer(); StopMotor();
     } else { // N
-      pausaMs(T_RETRO_10S);
-      avanzarRectoMs(T_RECTO_2S, true);
-      girarIzqMs(T_GIRO_LARGO); setServoC45(); retroMs(1000);
-    }
-  } else { // c6==ROJO o N
-    if (c7==C_VERDE) {
-      girarIzqMs(2000); girarDerMs(2000); StopMotor();
-      girarIzqMs(T_GIRO_LARGO); setServoC45(); retroMs(1000);
-    } else if (c7==C_ROJO) {
-      avanzarRectoMs(T_RECTO_2S, true); StopMotor();
-    } else {
-      pausaMs(T_RETRO_10S);
-      avanzarRectoMs(T_RECTO_2S, true); StopMotor();
+      maniobraEspecialHorario();
+      limpiarBufferCamara();
+      // reintento MISMO índice
+      c2 = leerColorPaso(2, true, WAIT_NO_COLOR_MS);
+      // vuelve a aplicar la rama (para no duplicar, haremos una mini-llamada recursiva simple)
+      if (c2=='G') { avanzarRecto(SEG_1S,SERVO_CENTER); giroLargoHorario(); servoCentroTrasDer(); StopMotor(); }
+      else if (c2=='R'){ retro(RETRO_CORTO_MS); giroLargoHorario(); servoCentroTrasDer(); StopMotor(); }
+      else { /* si vuelve N, ya quedó mejor posicionado; continúa */ }
     }
   }
   limpiarBufferCamara();
 
-  // 8.º color — regla especial (antiho):
-  // Si 7.º=VERDE → maniobra especial ANTIHO y luego recto 1s
-  // Si 7.º=ROJO → solo recto 1s
-  char c8 = leerColorBloqueante(); // lectura para cerrar ciclo
+  // ---------- 3.º color ----------
+  Serial.println("[3] Leyendo 3.º (depende de 2.º)...");
+  char c3;
+  bool permitirN3 = (c2=='G') ? true : true; // en horario, 3.º admite N en ambas ramas (según tu tabla)
+  c3 = leerColorPaso(3, permitirN3, WAIT_NO_COLOR_MS);
 
-  if (c7==C_VERDE) {
-    maniobraEspecialAntiho();
-    avanzarRectoMs(T_RECTO_1S, true);
-  } else { // c7==ROJO
-    avanzarRectoMs(T_RECTO_1S, true);
+  if (c2=='G') {
+    if (c3=='R') {
+      // DER 2.0 → IZQ 2.0 → quieto (servo=45)
+      avanzarConGiro(SERVO_RIGHT, CONT_TURN_MS);
+      avanzarConGiro(SERVO_LEFT,  CONT_TURN_MS);
+      servoCentroTrasIzq(); StopMotor();
+    } else { // VERDE o N
+      // recto 2.0 → DER 2.8 → centro → retro 1.0
+      avanzarRecto(CONT_FORWARD_MS, SERVO_CENTER);
+      giroLargoHorario(); servoCentroTrasDer(); retro(1000);
+    }
+  } else { // c2=='R'
+    if (c3=='G') {
+      // IZQ 2.0 → DER 2.0 → recto 1.0 → DER 2.8 → centro → retro 1.0
+      avanzarConGiro(SERVO_LEFT, CONT_TURN_MS);
+      avanzarConGiro(SERVO_RIGHT,CONT_TURN_MS);
+      avanzarRecto(SEG_1S, SERVO_CENTER);
+      giroLargoHorario(); servoCentroTrasDer(); retro(1000);
+    } else { // ROJO o N
+      // recto 2.0 → quieto
+      avanzarRecto(CONT_FORWARD_MS, SERVO_CENTER);
+      StopMotor();
+    }
+  }
+  limpiarBufferCamara();
+
+  // ---------- 4.º color (ramificado por 2.º y 3.º) ----------
+  Serial.println("[4] Leyendo 4.º...");
+  // Reglas: (2=G,3=G|N), (2=G,3=R), (2=R,3=G), (2=R,3=R|N)
+  bool permitirN4 = ((c2=='G' && c3!='R') || (c2=='R' && c3!='G')) ? false : false; // en tu última corrección removiste “Ninguno” en varias; lo dejamos sin N por defecto
+  char c4 = leerColorPaso(4, permitirN4, WAIT_NO_COLOR_MS);
+
+  if (c2=='G' && (c3=='G' || c3=='N')) {
+    if (c4=='G') { avanzarConGiro(SERVO_LEFT,1600); avanzarConGiro(SERVO_RIGHT,1600); servoCentroTrasDer(); StopMotor(); }
+    else         { avanzarConGiro(SERVO_RIGHT,1600); avanzarConGiro(SERVO_LEFT,1600);  servoCentroTrasIzq(); StopMotor(); }
+  }
+  else if (c2=='G' && c3=='R') {
+    if (c4=='G') { avanzarRecto(SEG_1S,SERVO_CENTER); giroLargoHorario(); servoCentroTrasDer(); retro(1000); StopMotor(); }
+    else         { giroLargoHorario(); servoCentroTrasDer(); retro(1000); StopMotor(); }
+  }
+  else if (c2=='R' && c3=='G') {
+    if (c4=='G') { avanzarConGiro(SERVO_LEFT,1600); avanzarConGiro(SERVO_RIGHT,1600); servoCentroTrasDer(); StopMotor(); }
+    else         { avanzarConGiro(SERVO_RIGHT,1600); avanzarConGiro(SERVO_LEFT,1600);  servoCentroTrasIzq(); StopMotor(); }
+  }
+  else { // (c2=='R' && (c3=='R' || c3=='N'))
+    if (c4=='G') { avanzarRecto(SEG_1S,SERVO_CENTER); giroLargoHorario(); servoCentroTrasDer(); retro(1000); StopMotor(); }
+    else         { giroLargoHorario(); servoCentroTrasDer(); retro(1000); StopMotor(); }
+  }
+  limpiarBufferCamara();
+
+  // ---------- 5.º color ----------
+  Serial.println("[5] Leyendo 5.º...");
+  char c5 = leerColorPaso(5, true, WAIT_NO_COLOR_MS); // aquí sí admitimos N en la rama (4=G) per tabla
+
+  // Si 4.º=G
+  if (c4=='G') {
+    if (c5=='R') {
+      avanzarConGiro(SERVO_RIGHT, CONT_TURN_MS);
+      avanzarConGiro(SERVO_LEFT,  CONT_TURN_MS);
+      servoCentroTrasIzq(); StopMotor();
+    } else { // G o N
+      avanzarRecto(CONT_FORWARD_MS, SERVO_CENTER);
+      giroLargoHorario(); servoCentroTrasDer(); retro(1000);
+    }
+  } else { // 4.º=R
+    if (c5=='G') {
+      avanzarConGiro(SERVO_LEFT, CONT_TURN_MS);
+      avanzarConGiro(SERVO_RIGHT,CONT_TURN_MS);
+      avanzarRecto(SEG_1S, SERVO_CENTER);
+      giroLargoHorario(); servoCentroTrasDer(); retro(1000);
+    } else { // R o N
+      avanzarRecto(CONT_FORWARD_MS, SERVO_CENTER); StopMotor();
+    }
+  }
+  limpiarBufferCamara();
+
+  // ---------- 6.º color ----------
+  Serial.println("[6] Leyendo 6.º...");
+  char c6 = leerColorPaso(6, false, 0); // en 6.º (según tu última versión) no forzamos N salvo cuando 5º=R se añadió N especial, ya se usó en 5.º
+  if (c5=='G') {
+    if (c6=='G') { avanzarConGiro(SERVO_LEFT,1600); avanzarConGiro(SERVO_RIGHT,1600); servoCentroTrasDer(); StopMotor(); }
+    else         { avanzarConGiro(SERVO_RIGHT,1600); avanzarConGiro(SERVO_LEFT,1600);  servoCentroTrasIzq(); StopMotor(); }
+  } else { // 5.º=R o N
+    if (c6=='G') { avanzarRecto(SEG_1S,SERVO_CENTER); giroLargoHorario(); servoCentroTrasDer(); retro(1000); StopMotor(); }
+    else         { giroLargoHorario(); servoCentroTrasDer(); retro(1000); StopMotor(); }
+  }
+  limpiarBufferCamara();
+
+  // ---------- 7.º color ----------
+  Serial.println("[7] Leyendo 7.º...");
+  char c7 = leerColorPaso(7, false, 0);
+  if (c6=='G') {
+    if (c7=='G') { avanzarRecto(CONT_FORWARD_MS, SERVO_CENTER); giroLargoHorario(); servoCentroTrasDer(); retro(1000); }
+    else         { avanzarConGiro(SERVO_RIGHT,CONT_TURN_MS); avanzarConGiro(SERVO_LEFT,CONT_TURN_MS); servoCentroTrasIzq(); StopMotor(); }
+  } else {
+    if (c7=='G') {
+      avanzarConGiro(SERVO_LEFT,CONT_TURN_MS);
+      avanzarConGiro(SERVO_RIGHT,CONT_TURN_MS);
+      avanzarRecto(SEG_1S, SERVO_CENTER);
+      giroLargoHorario(); servoCentroTrasDer(); retro(1000);
+    } else {
+      avanzarRecto(CONT_FORWARD_MS, SERVO_CENTER); StopMotor();
+    }
+  }
+  limpiarBufferCamara();
+
+  // ---------- 8.º color (regla especial horario) ----------
+  Serial.println("[8] Leyendo 8.º (regla especial)...");
+  char c8 = leerColorPaso(8, false, 0); // no importa el color para el final, pero dejamos lectura por consistencia
+
+  // Regla especial que pediste para HORARIO:
+  // Si 7.º = ROJO → (aquí iría maniobra especial) y luego avanza 1 s
+  // Si 7.º = VERDE → solo avanza 1 s
+  if (c7=='R') {
+    maniobraEspecialHorario();
+    avanzarRecto(SEG_1S, SERVO_CENTER);
+  } else {
+    avanzarRecto(SEG_1S, SERVO_CENTER);
   }
   StopMotor();
-  limpiarBufferCamara();
 }
 
-// =====================================================
-// =============== REPLAY VUELTA 2 y 3 =================
-// =====================================================
-void ejecutarReplay() {
-  for (int i=0;i<actions_len;i++) {
-    switch (actions[i].kind) {
-      case ACT_FWD:     avanzarRectoMs(actions[i].ms, false); break;
-      case ACT_REV:     retroMs(actions[i].ms); break;
-      case ACT_TURN_L:  girarIzqMs(actions[i].ms); break;
-      case ACT_TURN_R:  girarDerMs(actions[i].ms); break;
-      case ACT_SERVO_C35: setServoC35(); break;
-      case ACT_SERVO_C45: setServoC45(); break;
-      case ACT_STOP:    StopMotor(); break;
-      case ACT_DELAY:   pausaMs(actions[i].ms); break;
+// =================== Núcleo de lógica: ANTIHORARIO ===================
+void ejecutarAntiHorario() {
+  Serial.println("== LÓGICA ANTIHORARIO (giro largo IZQ 2.8 s) ==");
+
+  // ---------- 1.º color ----------
+  Serial.println("[1] Esperando color...");
+  char c1 = leerColorPaso(1, false, 0);
+
+  if (c1=='R') {
+    // ROJO → DER 1.4 → IZQ 1.4 → IZQ 2.8 → centro(45) → retro 1.0
+    avanzarConGiro(SERVO_RIGHT, 1400);
+    avanzarConGiro(SERVO_LEFT,  1400);
+    giroLargoAntiHorario();
+    servoCentroTrasIzq();
+    retro(1000);
+  } else {
+    // VERDE → IZQ 1.6 → DER 1.6 → quieto
+    avanzarConGiro(SERVO_LEFT, 1600);
+    avanzarConGiro(SERVO_RIGHT,1600);
+    StopMotor();
+  }
+  limpiarBufferCamara();
+
+  // ---------- 2.º color (pauta replicable en 4.º y 6.º) ----------
+  Serial.println("[2] Leyendo 2.º (depende de 1.º)...");
+  char c2;
+  if (c1=='G') {
+    // admite N con maniobra especial ANTIHO
+    c2 = leerColorPaso(2, true, WAIT_NO_COLOR_MS);
+    if (c2=='G') {
+      retro(RETRO_CORTO_MS);
+      giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000);
+    } else if (c2=='R') {
+      avanzarRecto(SEG_1S, SERVO_CENTER);
+      giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000);
+    } else {
+      maniobraEspecialAntiHo();
+      limpiarBufferCamara();
+      // reintento MISMO índice
+      c2 = leerColorPaso(2, true, WAIT_NO_COLOR_MS);
+      if (c2=='G'){ retro(RETRO_CORTO_MS); giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000); }
+      else if (c2=='R'){ avanzarRecto(SEG_1S,SERVO_CENTER); giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000); }
+    }
+  } else {
+    // 1.º=ROJO: sin “ninguno”
+    c2 = leerColorPaso(2, false, 0);
+    if (c2=='G') {
+      avanzarConGiro(SERVO_LEFT,1600);
+      avanzarConGiro(SERVO_RIGHT,1600);
+      StopMotor();
+    } else {
+      avanzarConGiro(SERVO_RIGHT,1600);
+      avanzarConGiro(SERVO_LEFT,1600);
+      StopMotor();
     }
   }
+  limpiarBufferCamara();
+
+  // ---------- 3.º color (pauta replicable en 5.º y 7.º) ----------
+  Serial.println("[3] Leyendo 3.º (depende de 2.º)...");
+  char c3 = leerColorPaso(3, true, WAIT_NO_COLOR_MS); // aquí sí usamos N
+
+  if (c2=='R' || c2=='N') {
+    if (c3=='G') {
+      avanzarConGiro(SERVO_LEFT,CONT_TURN_MS);
+      avanzarConGiro(SERVO_RIGHT,CONT_TURN_MS);
+      StopMotor();
+    } else {
+      avanzarRecto(CONT_FORWARD_MS, SERVO_CENTER);
+      giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000);
+    }
+  } else { // c2==G
+    if (c3=='R') {
+      avanzarConGiro(SERVO_RIGHT,CONT_TURN_MS);
+      avanzarConGiro(SERVO_LEFT, CONT_TURN_MS);
+      giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000);
+    } else { // G o N
+      avanzarRecto(CONT_FORWARD_MS, SERVO_CENTER);
+      StopMotor();
+    }
+  }
+  limpiarBufferCamara();
+
+  // ---------- 4.º color ----------
+  Serial.println("[4] Leyendo 4.º...");
+  char c4;
+  if (c3=='R') {
+    c4 = leerColorPaso(4, false, 0);
+    if (c4=='G') { avanzarConGiro(SERVO_LEFT,1600); avanzarConGiro(SERVO_RIGHT,1600); StopMotor(); }
+    else         { avanzarConGiro(SERVO_RIGHT,1600); avanzarConGiro(SERVO_LEFT,1600);  StopMotor(); }
+  } else { // 3.º = VERDE o N → con “ninguno” = maniobra especial ANTIHO
+    c4 = leerColorPaso(4, true, WAIT_NO_COLOR_MS);
+    if (c4=='R') { avanzarRecto(SEG_1S,SERVO_CENTER); giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000); StopMotor(); }
+    else if (c4=='G'){ giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000); StopMotor(); }
+    else {
+      maniobraEspecialAntiHo();
+      limpiarBufferCamara();
+      // reintenta 4.º
+      c4 = leerColorPaso(4, true, WAIT_NO_COLOR_MS);
+      if (c4=='R') { avanzarRecto(SEG_1S,SERVO_CENTER); giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000); StopMotor(); }
+      else if (c4=='G'){ giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000); StopMotor(); }
+    }
+  }
+  limpiarBufferCamara();
+
+  // ---------- 5.º color ----------
+  Serial.println("[5] Leyendo 5.º...");
+  char c5 = leerColorPaso(5, true, WAIT_NO_COLOR_MS);
+  if (c4=='G') {
+    if (c5=='R') {
+      avanzarConGiro(SERVO_RIGHT,CONT_TURN_MS);
+      avanzarConGiro(SERVO_LEFT, CONT_TURN_MS);
+      StopMotor();
+    } else { // G o N
+      avanzarRecto(CONT_FORWARD_MS, SERVO_CENTER);
+      giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000);
+    }
+  } else { // 4.º = R
+    if (c5=='G') {
+      avanzarConGiro(SERVO_LEFT,CONT_TURN_MS);
+      avanzarConGiro(SERVO_RIGHT,CONT_TURN_MS);
+      // luego IZQ 2.8
+      giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000);
+    } else { // R o N
+      avanzarRecto(CONT_FORWARD_MS, SERVO_CENTER); StopMotor();
+    }
+  }
+  limpiarBufferCamara();
+
+  // ---------- 6.º color ----------
+  Serial.println("[6] Leyendo 6.º...");
+  char c6 = leerColorPaso(6, true, WAIT_NO_COLOR_MS);
+  if (c5=='G') {
+    if (c6=='G') { avanzarConGiro(SERVO_LEFT,1600); avanzarConGiro(SERVO_RIGHT,1600); StopMotor(); }
+    else if (c6=='R'){ avanzarConGiro(SERVO_RIGHT,1600); avanzarConGiro(SERVO_LEFT,1600);  StopMotor(); }
+    else { // N
+      avanzarRecto(CONT_FORWARD_MS, SERVO_CENTER);
+      giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000);
+    }
+  } else { // 5.º=R o N
+    if (c6=='G') { avanzarRecto(SEG_1S,SERVO_CENTER); giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000); StopMotor(); }
+    else if (c6=='R'){ giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000); StopMotor(); }
+    else { // N
+      avanzarRecto(CONT_FORWARD_MS, SERVO_CENTER);
+      giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000);
+    }
+  }
+  limpiarBufferCamara();
+
+  // ---------- 7.º color ----------
+  Serial.println("[7] Leyendo 7.º...");
+  char c7 = leerColorPaso(7, true, WAIT_NO_COLOR_MS);
+  if (c6=='G') {
+    if (c7=='G') { avanzarRecto(CONT_FORWARD_MS,SERVO_CENTER); giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000); }
+    else if (c7=='R'){ avanzarConGiro(SERVO_RIGHT,CONT_TURN_MS); avanzarConGiro(SERVO_LEFT,CONT_TURN_MS); StopMotor(); }
+    else { // N
+      avanzarRecto(CONT_FORWARD_MS,SERVO_CENTER); giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000);
+    }
+  } else { // 6.º=R o N
+    if (c7=='G') {
+      avanzarConGiro(SERVO_LEFT,CONT_TURN_MS);
+      avanzarConGiro(SERVO_RIGHT,CONT_TURN_MS);
+      giroLargoAntiHorario(); servoCentroTrasIzq(); retro(1000);
+    } else if (c7=='R') {
+      avanzarRecto(CONT_FORWARD_MS,SERVO_CENTER); StopMotor();
+    } else {
+      avanzarRecto(CONT_FORWARD_MS,SERVO_CENTER); StopMotor();
+    }
+  }
+  limpiarBufferCamara();
+
+  // ---------- 8.º color (regla especial antiho) ----------
+  Serial.println("[8] Leyendo 8.º (regla especial)...");
+  char c8 = leerColorPaso(8, false, 0);
+
+  // Regla especial ANTIHO:
+  // Si 7.º = VERDE → maniobra especial antiho y luego avanza 1 s
+  // Si 7.º = ROJO  → solo avanza 1 s
+  if (c7=='G') {
+    maniobraEspecialAntiHo();
+    avanzarRecto(SEG_1S, SERVO_CENTER);
+  } else {
+    avanzarRecto(SEG_1S, SERVO_CENTER);
+  }
+  StopMotor();
 }
 
-// =====================================================
-// ===================== SETUP/LOOP ====================
-// =====================================================
-bool sentidoAntihorario = false; // false=Horario, true=Antiho
+// =================== Secuencia de una vuelta (1..8) ===================
+void ejecutarVuelta(Sentido s) {
+  if (s==HORARIO) ejecutarHorario();
+  else            ejecutarAntiHorario();
+}
 
+// =================== Setup ===================
 void setup() {
   Serial.begin(115200);
   Wire.begin();
@@ -1658,78 +1610,83 @@ void setup() {
   // Servo
   miServo.setPeriodHertz(50);
   miServo.attach(SERVO_PIN, 500, 2400);
-  miServo.write(SERVO_CENTER); delay(300);
-
+  miServo.write(SERVO_CENTER);
   StopMotor();
 
-  // Sensores distancia
+  // VL53
   selectOnlyOneMux(MUX_LEFT_ADDR);
-  sensorLeft.setTimeout(250);
-  sensorLeft.init();
+  sensorLeft.setTimeout(250); sensorLeft.init();
   sensorLeft.setDistanceMode(VL53L1X::Long);
   sensorLeft.setMeasurementTimingBudget(50000);
   sensorLeft.startContinuous(50);
 
   selectOnlyOneMux(MUX_RIGHT_ADDR);
-  sensorRight.setTimeout(250);
-  sensorRight.init();
+  sensorRight.setTimeout(250); sensorRight.init();
   sensorRight.setDistanceMode(VL53L1X::Long);
   sensorRight.setMeasurementTimingBudget(50000);
   sensorRight.startContinuous(50);
 
-  Serial.println("== Listo: Sistema iniciado ==");
+  Serial.println("== Inicio: Salida estacionamiento ==");
+  // Elegir lado por mayor distancia
+  int dL = lecturaPromedio(sensorLeft,  MUX_LEFT_ADDR, 3);
+  int dR = lecturaPromedio(sensorRight, MUX_RIGHT_ADDR,3);
+  Serial.print("Dist IZQ="); Serial.print(dL);
+  Serial.print(" | DER=");   Serial.println(dR);
+
+  bool eligioIzquierda = (dL >= dR);
+  if (eligioIzquierda) {
+    Serial.println("Salida: IZQUIERDA (=> ANTIHORARIO)");
+    secuenciaSalidaIzquierda();
+    sentido = ANTIHORARIO;
+  } else {
+    Serial.println("Salida: DERECHA (=> HORARIO)");
+    secuenciaSalidaDerecha();
+    sentido = HORARIO;
+  }
+
+  Serial.println("Maniobra final (giro contrario)...");
+  maniobraFinal(eligioIzquierda);
+
+  Serial.println("== Preparado para Vuelta 1 ==");
 }
 
+// =================== Loop ===================
 void loop() {
-  static bool runOnce = false;
-  if (runOnce) { delay(1000); return; }
-  runOnce = true;
-
-  // —— 1) Decidir sentido por mayor distancia
-  int dL = lecturaPromedio(sensorLeft,  MUX_LEFT_ADDR, 3);
-  int dR = lecturaPromedio(sensorRight, MUX_RIGHT_ADDR, 3);
-  bool eligioIzq = (dL >= dR);   // si IZQ >= DER → elegimos salida hacia IZQ (antiho)
-
-  Serial.print("Dist IZQ="); Serial.print(dL);
-  Serial.print("  DER=");     Serial.println(dR);
-
-  if (eligioIzq) {
-    sentidoAntihorario = true;
-    Serial.println("Salida GRANDE: IZQUIERDA (ANTIHO)");
-    secuenciaSalidaIzq();
-  } else {
-    sentidoAntihorario = false;
-    Serial.println("Salida GRANDE: DERECHA (HORARIO)");
-    secuenciaSalidaDer();
+  // Vuelta 1 (lee cámara y memoriza)
+  if (vueltaActual == 1) {
+    usarMemoria = false;
+    ejecutarVuelta(sentido);
+    memoriaLlena = true;
+    vueltaActual = 2;
+    Serial.println("== Fin Vuelta 1. Memoria lista. Comienza Vuelta 2 ==");
+    delay(400);
+    return;
   }
 
-  // —— 2) Maniobra final (giro contrario)
-  maniobraFinalGiroContrario(eligioIzq);
-
-  // —— 3) Vuelta 1: aprender colores (grabar memoria)
-  recording_enabled = true;
-  if (!sentidoAntihorario) {
-    Serial.println("[Vuelta 1] HORARIO — aprendizaje");
-    coloresHorario_vuelta1();
-  } else {
-    Serial.println("[Vuelta 1] ANTIHORARIO — aprendizaje");
-    coloresAntiho_vuelta1();
+  // Vuelta 2 (reproduce memoria)
+  if (vueltaActual == 2 && memoriaLlena) {
+    usarMemoria = true;
+    ejecutarVuelta(sentido);
+    vueltaActual = 3;
+    Serial.println("== Fin Vuelta 2. Comienza Vuelta 3 ==");
+    delay(400);
+    return;
   }
 
-  // —— 4) Vuelta 2 y 3: reproducir
-  recording_enabled = false;
-  Serial.println("[Vuelta 2] Reproducción de memoria");
-  ejecutarReplay();
+  // Vuelta 3 (reproduce memoria)
+  if (vueltaActual == 3 && memoriaLlena) {
+    usarMemoria = true;
+    ejecutarVuelta(sentido);
+    Serial.println("== Fin Vuelta 3. Programa finaliza ==");
+    while (true) { StopMotor(); delay(1000); }
+  }
 
-  Serial.println("[Vuelta 3] Reproducción de memoria");
-  ejecutarReplay();
-
-  Serial.println("== Fin de 3 vueltas ==");
-  while (true) { StopMotor(); delay(1000); }
+  // Seguridad
+  StopMotor();
+  delay(1000);
 }
 
 ```
-
 
 Camera
 ----
