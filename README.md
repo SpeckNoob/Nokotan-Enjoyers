@@ -1937,6 +1937,8 @@ Camera code (FINAL)
 
 This is the last update to the code before the 2025 national competition in Panama, the camera is now programmed for quality and precision rather than fps.
 
+```python
+
 # OpenMV color detector for ESP32 robot
 # Sends: b"verde\n" or b"rojo\n" via UART(1) @ 115200
 # Shows live overlay (rectangles + labels) in the OpenMV IDE preview.
@@ -2090,6 +2092,7 @@ while True:
     # Optional FPS overlay
     img.draw_string(4, img.height()-12, "FPS: %0.1f" % clock.fps(), color=(255,255,255), scale=1)
 
+```
 
 [Back to table of contents](#table-of-contents)
 
