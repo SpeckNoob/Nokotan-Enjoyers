@@ -132,7 +132,7 @@ The robot operates with multiple motors and sensors which will be showcased here
 ----
 The robot uses motors for drving and steering, these components work together to ensure the robot has a smooth and efficient movement.
 
-![image](https://github.com/user-attachments/assets/fbd40ed2-1a61-49ba-8580-67152f42db4c) 
+<img width="800" height="800" alt="image" src="https://github.com/user-attachments/assets/7e3b3c3f-541d-4897-9966-132afc47e418" />
 
 |  Voltage |   Current  |   rpm    |  Torque  |
 |----------|------------|----------|----------|
